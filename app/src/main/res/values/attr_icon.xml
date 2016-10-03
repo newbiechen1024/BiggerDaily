@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="IconView">
+        <attr name="color_style" format="color"/>
+        <attr name="frame_stroke" format="dimension"/>
+        <attr name="arc_stroke" format="dimension"/>
+    </declare-styleable>
+</resources>

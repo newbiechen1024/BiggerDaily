@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/hole_gray">
+
+    <ImageView
+        android:id="@+id/splash_iv_show_img"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scaleType="fitXY"/>
+
+    <RelativeLayout
+        android:id="@+id/splash_rl_show_content"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center_vertical">
+
+        <com.newbiechen.zhihudailydemo.widget.IconView
+            android:id="@+id/splash_fl_logo_anim"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="15dp"/>
+
+        <TextView
+            android:id="@+id/splash_tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/splash_fl_logo_anim"
+            android:layout_alignTop="@+id/splash_fl_logo_anim"
+            android:layout_marginTop="2dp"
+            android:text="@string/app_name"
+            android:textSize="18sp"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/splash_fl_logo_anim"
+            android:layout_alignBottom="@+id/splash_fl_logo_anim"
+            android:layout_marginBottom="2dp"
+            android:text="@string/app_slogan"
+            android:textColor="@color/translucent_white" />
+    </RelativeLayout>
+
+</LinearLayout>

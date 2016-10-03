@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">装逼日报</string>
+    <string name="app_slogan">一日不装，浑身难受。</string>
+
+    <string name="homepage">首页</string>
+    <string name="open_drawer">打开</string>
+    <string name="close_drawer">关闭</string>
+    <string name="message">消息</string>
+    <string name="please_login">请登录</string>
+    <string name="my_collect">我的收藏</string>
+    <string name="offline_download">离线下载</string>
+</resources>

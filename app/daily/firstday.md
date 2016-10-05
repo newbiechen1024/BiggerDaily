@@ -110,7 +110,11 @@ canvas.drawRoundRect()设置圆角的效果太差，圆角效果的制作还是�
 
 首先简单的封装OKHttp类，1、设置CookJar。 2、继承Callback接口，将在子线程中执行的Callback接口，通过Handler转化到主线程中的抽象类。  3、根据要求，制作出同步加载数据的接口。
 
+### 总结
 
+## 自制的效果图
+
+![](https://github.com/newbiechen1024/BiggerDaily/blob/develop/app/screenshot/my_splash_activity.gif)
 
 
 

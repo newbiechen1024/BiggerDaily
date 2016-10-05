@@ -44,7 +44,7 @@ public class MainActivity extends AppBaseActivity {
         //让DrawLayout与Toolbar关联
         setUpToggle();
         //初始化Fragment
-        initFragment(savedInstanceState);
+        //initFragment(savedInstanceState);
     }
 
     /**

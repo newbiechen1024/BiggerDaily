@@ -79,4 +79,6 @@
 
 2、还未制作DrawerLayout的按钮类
 
+## 自制的效果图
 
+![](https://github.com/newbiechen1024/BiggerDaily/blob/develop/app/screenshot/my_main_activity_1.gif)

@@ -28,7 +28,7 @@ public abstract class AppBaseActivity extends BaseActivity {
         mToolbar.setTitleTextColor(Color.WHITE);
         //与Activity关联
         setSupportActionBar(mToolbar);
-        //允许显示左上角的图标
+        //允许显示返回按钮
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

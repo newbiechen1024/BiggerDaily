@@ -7,4 +7,5 @@
     <dimen name="slide_title_height">130dp</dimen>
 
     <dimen name="slide_icon_size">40dp</dimen>
+    <dimen name="banner_height">200dp</dimen>
 </resources>

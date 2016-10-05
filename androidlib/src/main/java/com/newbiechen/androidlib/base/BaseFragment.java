@@ -7,16 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.newbiechen.androidlib.net.RemoteService;
+
 /**
  * Created by PC on 2016/9/9.
  */
 public abstract class BaseFragment extends Fragment {
     protected View view ;
+
+    protected RemoteService mRemoteService;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = onCreateContentView(inflater,container,savedInstanceState);
         initView();
+        mRemoteService = RemoteService.getInstance(getContext());
         initWidget();
         initClick();
         processLogic(savedInstanceState);
@@ -32,5 +37,4 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void initWidget();
     protected abstract void initClick();
     protected abstract void processLogic(Bundle savedInstanceState);
-
 }

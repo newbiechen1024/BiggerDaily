@@ -7,15 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.newbiechen.androidlib.R;
+import com.newbiechen.androidlib.net.RemoteService;
 
 /**
  * Created by PC on 2016/9/8.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+    protected RemoteService mRemoteService;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onCreateView(savedInstanceState);
+        mRemoteService = RemoteService.getInstance(this);
         initWidget(savedInstanceState);
         initClick();
         processLogin(savedInstanceState);

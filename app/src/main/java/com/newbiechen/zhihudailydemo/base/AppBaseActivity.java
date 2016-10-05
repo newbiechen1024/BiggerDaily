@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.newbiechen.androidlib.base.BaseActivity;
+import com.newbiechen.androidlib.net.RemoteService;
 import com.newbiechen.zhihudailydemo.R;
 
 /**
@@ -12,10 +13,11 @@ import com.newbiechen.zhihudailydemo.R;
  */
 public abstract class AppBaseActivity extends BaseActivity {
     protected Toolbar mToolbar;
-
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
+        //初始化View
         onCreateContentView(savedInstanceState);
+        //初始化Widget
         setUpToolBar();
     }
 

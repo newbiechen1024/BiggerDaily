@@ -9,9 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by PC on 2016/10/2.
+ * 为ImageLoader服务的线程池
  */
-public class DefaultThreadPool extends ThreadPoolExecutor {
-
+class ImageThreadPool extends ThreadPoolExecutor {
     //CPU的数量
     private static final int CPU_SIZE = Runtime.getRuntime().availableProcessors();
     //核心线程数
@@ -34,7 +34,7 @@ public class DefaultThreadPool extends ThreadPoolExecutor {
         }
     };
 
-    public DefaultThreadPool() {
+    public ImageThreadPool() {
         super(CORE_THREAD_SIZE, MAX_THREAD_SIZE, ALIVE_TIME, TimeUnit.MILLISECONDS, QUEUE, FACTORY);
     }
 }

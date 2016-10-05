@@ -27,15 +27,17 @@ public class ImageResize {
 
     /**
      * 通过FileDescriptor缩放图片
-     * @param
+     * @param fd          文件流
+     * @param reqWidth    图片最大宽度
+     * @param reqHeight   图片最大高度
      * @return
      */
-    public static Bitmap compressBitmapFromFD(FileDescriptor fd){
+    public static Bitmap compressBitmapFromFD(FileDescriptor fd,int reqWidth,int reqHeight){
         BitmapFactory.Options options = new BitmapFactory.Options();
         if (fd != null){
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFileDescriptor(fd,null,options);
-            options.inSampleSize = calculateSampleSize(options,DEFAULT_COMPRESS_WIDTH,DEFAULT_COMPRESS_HEIGHT);
+            options.inSampleSize = calculateSampleSize(options,reqWidth,reqHeight);
             options.inJustDecodeBounds = false;
         }
         return BitmapFactory.decodeFileDescriptor(fd,null,options);

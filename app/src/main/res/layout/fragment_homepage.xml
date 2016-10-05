@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
+    <com.lhh.ptrrv.library.PullToRefreshRecyclerView
+        android:id="@+id/homepage_ptrrv_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <com.bigkoo.convenientbanner.ConvenientBanner
-            android:layout_width="match_parent"
-            android:layout_height="300dp">
-
-        </com.bigkoo.convenientbanner.ConvenientBanner>
-    </LinearLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+        android:background="@color/topic_background">
+    </com.lhh.ptrrv.library.PullToRefreshRecyclerView>
+</RelativeLayout>

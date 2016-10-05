@@ -40,7 +40,7 @@ public class ImageLoader {
 
     private static final int DISK_INDEX = 0;
     //线程池的创建
-    private static final ExecutorService THREAD_POOL = new DefaultThreadPool();
+    private static final ExecutorService THREAD_POOL = new ImageThreadPool();
 
     private static ImageLoader sImageLoader;
 
@@ -100,7 +100,7 @@ public class ImageLoader {
      * @param url
      * @return
      */
-    private Bitmap loadBitmapFromUrl(String url){
+    private Bitmap loadBitmapFromUrl(String url,int reqWidth,int reqHeight){
         String key = str2HexStr(url);
         Bitmap bitmap = null;
         InputStream is = null;
@@ -128,14 +128,14 @@ public class ImageLoader {
             IOUtils.closeStream(is);
         }
         if (isDiskCacheExist){
-            bitmap = getBitmapFromDiskCache(url);
+            bitmap = getBitmapFromDiskCache(url,reqWidth,reqHeight);
         }
         return bitmap;
     }
 
 
 
-    private Bitmap loadBitmap(String urlPath){
+    private Bitmap loadBitmap(String urlPath,int reqWidth,int reqHeight){
         //将网址转换成对应的haxString
         String key  = str2HexStr(urlPath);
         //首先从一级缓存中查找是否存在图片
@@ -143,12 +143,12 @@ public class ImageLoader {
 
         //查看二级缓存是否存在图
         if (bitmap == null) {
-            bitmap = getBitmapFromDiskCache(urlPath);
+            bitmap = getBitmapFromDiskCache(urlPath,reqWidth,reqHeight);
         }
 
         //从网络中获取图片
         if (bitmap == null){
-            bitmap = loadBitmapFromUrl(urlPath);
+            bitmap = loadBitmapFromUrl(urlPath,reqWidth,reqHeight);
         }
         return bitmap;
     }
@@ -245,12 +245,17 @@ public class ImageLoader {
         return sImageLoader;
     }
 
+
+    public Bitmap getBitmapFromDiskCache(String urlPath){
+        return getBitmapFromDiskCache(urlPath,MetricsUtils.getScreenWidth(),
+                MetricsUtils.getScreenHeight());
+    }
     /**
      * 从二级缓存中提取数据
      * @param urlPath ：url对应的hexString作为key
      * @return bitmap ：返回图片
      */
-    public Bitmap getBitmapFromDiskCache(String urlPath){
+    public Bitmap getBitmapFromDiskCache(String urlPath,int reqWidth,int reqHeight){
         //转换成hexStr
         String key = str2HexStr(urlPath);
         //首先判断DiskCache是否存在
@@ -269,7 +274,7 @@ public class ImageLoader {
                 fis = (FileInputStream)snapshot.getInputStream(DISK_INDEX);
                 FileDescriptor fd = fis.getFD();
                 //压缩获取Bitmap
-                bitmap = ImageResize.compressBitmapFromFD(fd);
+                bitmap = ImageResize.compressBitmapFromFD(fd,reqWidth,reqHeight);
                 //将压缩完成后的Bitmap添加到一级缓存中
                 if (bitmap != null){
                     saveBitmap2LruCache(key,bitmap);
@@ -288,18 +293,22 @@ public class ImageLoader {
         return bitmap;
     }
 
-
     /**
      * 直接加载图片数据，不经过缓存查询
      * @param urlPath
      * @param callback
      */
     public void loadImageFromUrl(final String urlPath, final Callback callback){
+        loadImageFromUrl(urlPath,MetricsUtils.getScreenWidth(),
+                MetricsUtils.getScreenHeight(),callback);
+    }
+
+    public void loadImageFromUrl(final String urlPath, final int reqWidth, final int reqHeight, final Callback callback){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 //直接加载数据
-                Bitmap bitmap = loadBitmapFromUrl(urlPath);
+                Bitmap bitmap = loadBitmapFromUrl(urlPath,reqWidth,reqHeight);
                 if (callback != null){
                     callback.onImageLoad(bitmap);
                 }
@@ -309,15 +318,27 @@ public class ImageLoader {
     }
 
     /**
-     * 从网络中加载图片，并将图片显示到指定的ImageView中
+     * 从网络中加载图片，并将图片显示到指定的ImageView中，经过缓存查询
      * @param url           网址
      * @param imageView     显示图片的控件
      */
     public void bindImageFromUrl(final String url, final ImageView imageView){
+       bindImageFromUrl(url,imageView,
+               MetricsUtils.getScreenWidth(),MetricsUtils.getScreenHeight());
+    }
+
+
+
+    /**
+     * 从网络中加载图片，并将图片显示到指定的ImageView中
+     * @param url           网址
+     * @param imageView     显示图片的控件
+     */
+    public void bindImageFromUrl(final String url, final ImageView imageView, final int reqWidth, final int reqHeight){
         Runnable runnable = new Runnable(){
             @Override
             public void run() {
-                final Bitmap bitmap = loadBitmap(url);
+                final Bitmap bitmap = loadBitmap(url,reqWidth,reqHeight);
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -330,4 +351,6 @@ public class ImageLoader {
         };
         THREAD_POOL.execute(runnable);
     }
+
+
 }

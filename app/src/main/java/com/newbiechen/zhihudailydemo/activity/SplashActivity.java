@@ -10,9 +10,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.google.gson.Gson;
 import com.newbiechen.androidlib.base.BaseActivity;
+
+
+import com.newbiechen.androidlib.net.RemoteService;
+import com.newbiechen.androidlib.net.RemoteService.*;
 import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.zhihudailydemo.R;
+import com.newbiechen.zhihudailydemo.entity.SplashImageEntity;
+import com.newbiechen.zhihudailydemo.utils.URLManager;
 import com.newbiechen.zhihudailydemo.widget.IconView;
 
 /**
@@ -32,6 +39,7 @@ public class SplashActivity extends BaseActivity {
         hideStatusBar();
         hideNavigationBar();
         setContentView(R.layout.activity_splash);
+
         //获取控件
         mRlShowContent = getViewById(R.id.splash_rl_show_content);
         mIvShowLogo = getViewById(R.id.splash_fl_logo_anim);
@@ -74,19 +82,18 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void processLogin(Bundle savedInstanceState) {
-        setUpSplashAnim();
+        setUpSloganAnim();
     }
 
     /**
      * Activity显示时候的动画效果
      */
-    private void setUpSplashAnim(){
+    private void setUpSloganAnim(){
         //设置展现标语的动画
         Animation sloganShowAnim = AnimationUtils.loadAnimation(this,R.anim.translate_down_to_up);
         sloganShowAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -113,7 +120,7 @@ public class SplashActivity extends BaseActivity {
         mIvShowLogo.setOnIconAnimFinishListener(new IconView.OnIconAnimFinishListener() {
             @Override
             public void onAnimFinish() {
-                setUpImgShowAnim();
+                showSplashImg();
             }
         });
     }
@@ -121,21 +128,37 @@ public class SplashActivity extends BaseActivity {
     /**
      * 设置图片显示的动画
      */
-    private void setUpImgShowAnim(){
+    private void showSplashImg(){
+        RemoteCallback callback = new RemoteCallback(){
+            @Override
+            public void onResponse(String data) {
+                Gson gson = new Gson();
+                SplashImageEntity entity = gson.fromJson(data,SplashImageEntity.class);
+                setUpImgAnim(entity.getImg());
+            }
+        };
+        //远程调用
+        RemoteService.getInstance(this).loadData(URLManager.SPLASH_IMG_PATH,callback);
+    }
+
+    /**
+     * 设置图片显示的动画
+     * @param urlPath
+     */
+    private void setUpImgAnim(String urlPath){
         //首先判断缓存中是否存在图片数据
-        //可进行判断，如果url过期了，那么也直接加载数据
-        Bitmap bitmap = mImageLoader.getBitmapFromDiskCache(TEST_URL);
+        Bitmap bitmap = mImageLoader.getBitmapFromDiskCache(urlPath);
         if (bitmap != null){
             mIvShowPic.setImageBitmap(bitmap);
         }
         else {
             mIvShowPic.setImageResource(R.mipmap.splash_pic);
             //并加载图片数据
-            mImageLoader.loadImageFromUrl(TEST_URL,null);
+            mImageLoader.loadImageFromUrl(urlPath,null);
         }
 
         //添加逐渐显示效果，过渡
-        Animation alphaAnim = AnimationUtils.loadAnimation(this,R.anim.alpha_hide_to_show);
+        Animation alphaAnim = AnimationUtils.loadAnimation(SplashActivity.this,R.anim.alpha_hide_to_show);
         mIvShowPic.startAnimation(alphaAnim);
         alphaAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -157,3 +180,4 @@ public class SplashActivity extends BaseActivity {
         });
     }
 }
+

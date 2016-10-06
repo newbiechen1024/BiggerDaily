@@ -1,5 +1,6 @@
 package com.newbiechen.androidlib.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,13 +29,20 @@ public abstract class BaseFragment extends Fragment {
         return view;
     }
 
-    public <VT> VT getViewById(int id){
-        return (VT) view.findViewById(id);
-    }
-
     protected abstract View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
     protected abstract void initView();
     protected abstract void initWidget();
     protected abstract void initClick();
     protected abstract void processLogic(Bundle savedInstanceState);
+
+/****************************************公共方法*****************************************************/
+
+    public <VT extends View> VT getViewById(int id){
+        return (VT) view.findViewById(id);
+    }
+
+    public void startActivity(Class<? extends BaseActivity> activity){
+        Intent intent = new Intent(getContext(),activity);
+        startActivity(intent);
+    }
 }

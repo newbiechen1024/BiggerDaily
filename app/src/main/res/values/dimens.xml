@@ -7,5 +7,8 @@
     <dimen name="slide_title_height">130dp</dimen>
 
     <dimen name="slide_icon_size">40dp</dimen>
-    <dimen name="banner_height">200dp</dimen>
+    <dimen name="banner_height">210dp</dimen>
+
+    <dimen name="story_brief_icon_width">80dp</dimen>
+    <dimen name="story_brief_icon_height">70dp</dimen>
 </resources>

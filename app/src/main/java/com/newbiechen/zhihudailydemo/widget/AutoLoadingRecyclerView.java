@@ -13,7 +13,7 @@ import android.util.Log;
  *
  */
 public class AutoLoadingRecyclerView extends RecyclerView {
-    private static final int COUNT = 4;
+    private static final int COUNT = 1;
 
     //掌管Item显示和加载。
     private LinearLayoutManager mManager;
@@ -55,11 +55,13 @@ public class AutoLoadingRecyclerView extends RecyclerView {
         }
         int lastVisibleItemPos = mManager.findLastVisibleItemPosition();
         int itemCount = mManager.getItemCount();
-        if (itemCount >= 4 &&
+        if (itemCount >= 1 &&
                 lastVisibleItemPos == (itemCount-COUNT)&&
                 dy > 0 && isLoading && isFinish){
             //启动加载更多的回调
-            mLoadMoreListener.onLoadMore();
+            if(mLoadMoreListener != null){
+                mLoadMoreListener.onLoadMore();
+            }
             isFinish = false;
         }
     }

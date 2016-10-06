@@ -1,5 +1,6 @@
 package com.newbiechen.zhihudailydemo.activity;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.newbiechen.androidlib.base.BaseActivity;
 import com.newbiechen.androidlib.net.RemoteService;
 import com.newbiechen.androidlib.net.RemoteService.*;
 import com.newbiechen.androidlib.utils.ImageLoader;
+import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.entity.SplashImageEntity;
 import com.newbiechen.zhihudailydemo.utils.URLManager;
@@ -27,7 +29,9 @@ import com.newbiechen.zhihudailydemo.widget.IconView;
  */
 public class SplashActivity extends BaseActivity {
     private static final String TAG = "SplashActivity";
-    private static final String TEST_URL = "http://cdn.duitang.com/uploads/item/201511/01/20151101201348_jerSZ.jpeg";
+
+    private static final String SPLASH_IMG = "splash_img";
+    private static final String NO_NETWORK = "NoNetWork";
     private RelativeLayout mRlShowContent;
     private IconView mIvShowLogo;
     private ImageView mIvShowPic;
@@ -131,9 +135,18 @@ public class SplashActivity extends BaseActivity {
     private void showSplashImg(){
         RemoteCallback callback = new RemoteCallback(){
             @Override
+            public void onRemoteFailure() {
+                String urlPath = SharedPreferenceUtils.
+                        getData(SplashActivity.this,SPLASH_IMG,NO_NETWORK);
+                setUpImgAnim(urlPath);
+            }
+
+            @Override
             public void onResponse(String data) {
                 Gson gson = new Gson();
                 SplashImageEntity entity = gson.fromJson(data,SplashImageEntity.class);
+                SharedPreferenceUtils.
+                        saveData(SplashActivity.this,SPLASH_IMG,entity.getImg());
                 setUpImgAnim(entity.getImg());
             }
         };
@@ -153,8 +166,11 @@ public class SplashActivity extends BaseActivity {
         }
         else {
             mIvShowPic.setImageResource(R.mipmap.splash_pic);
-            //并加载图片数据
-            mImageLoader.loadImageFromUrl(urlPath,null);
+            //第一次加载没网环境下，不加载
+            if (urlPath != NO_NETWORK){
+                //并加载图片数据
+                mImageLoader.loadImageFromUrl(urlPath);
+            }
         }
 
         //添加逐渐显示效果，过渡

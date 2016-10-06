@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--story的清单-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
+
+    <!--story的日期-->
+    <TextView
+        android:id="@+id/brief_tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="7dp" />
+
+    <!--story的简介-->
+    <RelativeLayout
+        android:id="@+id/brief_rl_story"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="15dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/story_brief_shadow">
+
+        <TextView
+            android:id="@+id/brief_tv_title"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:ellipsize="end"
+            android:lines="4"
+            android:textSize="18sp"
+            android:textColor="@color/black"/>
+
+        <ImageView
+            android:id="@+id/brief_iv_icon"
+            android:layout_width="@dimen/story_brief_icon_width"
+            android:layout_height="@dimen/story_brief_icon_height"
+            android:scaleType="fitXY"
+            android:src="@drawable/image_small_default"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+
+        <ImageView
+            android:id="@+id/brief_iv_more_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/home_pic"
+            android:layout_alignRight="@+id/brief_iv_icon"
+            android:layout_alignBottom="@+id/brief_iv_icon"
+            android:visibility="gone"/>
+    </RelativeLayout>
+</LinearLayout>

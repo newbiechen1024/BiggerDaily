@@ -10,6 +10,7 @@ import java.util.Calendar;
 
 /**
  * Created by PC on 2016/10/4.
+ * date几号的格式是1而不是01
  */
 public class DateUtils {
 
@@ -30,12 +31,41 @@ public class DateUtils {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                relDate = (month+1)+"月"+day+"日";
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                int datOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                relDate = (month+1)+"月"+dayOfMonth+"日"+"  星期"+changeNum2Chinese(datOfWeek);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return relDate;
+    }
+
+    private static String changeNum2Chinese(int num){
+        String data = "";
+        switch (num){
+            case 1:
+                data = "日";
+                break;
+            case 2:
+                data = "一";
+                break;
+            case 3:
+                data = "二";
+                break;
+            case 4:
+                data = "三";
+                break;
+            case 5:
+                data = "四";
+                break;
+            case 6:
+                data = "五";
+                break;
+            case 7:
+                data = "六";
+                break;
+        }
+        return data;
     }
 }

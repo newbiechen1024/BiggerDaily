@@ -7,7 +7,7 @@
     <com.yyydjk.library.BannerLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="@dimen/banner_height"
         app:autoPlayDuration="5000"
         app:indicatorMargin="10dp"
         app:indicatorPosition="centerBottom"

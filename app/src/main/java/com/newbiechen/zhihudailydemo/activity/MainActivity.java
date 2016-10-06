@@ -1,7 +1,6 @@
 package com.newbiechen.zhihudailydemo.activity;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,14 +9,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
 
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.base.AppBaseActivity;
 import com.newbiechen.zhihudailydemo.fragment.HomePageFragment;
-import com.yyydjk.library.BannerLayout;
+
+import junit.framework.Test;
 
 public class MainActivity extends AppBaseActivity {
     private DrawerLayout mDrawerLayout;
@@ -44,7 +42,7 @@ public class MainActivity extends AppBaseActivity {
         //让DrawLayout与Toolbar关联
         setUpToggle();
         //初始化Fragment
-        //initFragment(savedInstanceState);
+        initFragment(savedInstanceState);
     }
 
     /**
@@ -99,7 +97,8 @@ public class MainActivity extends AppBaseActivity {
         mFragmentManager = getSupportFragmentManager();
         //创建Fragment
         if (savedInstanceState != null){
-            mHomePageFragment = (HomePageFragment) mFragmentManager.findFragmentByTag(HomePageFragment.TAG);
+            mHomePageFragment = (HomePageFragment) mFragmentManager.
+                    findFragmentByTag(HomePageFragment.TAG);
         }
         else {
             mHomePageFragment = new HomePageFragment();
@@ -117,7 +116,7 @@ public class MainActivity extends AppBaseActivity {
 
     private void addFragment(Fragment fragment){
         FragmentTransaction ft = mFragmentManager.beginTransaction();
-        ft.add(R.id.main_frame,fragment,HomePageFragment.TAG);
+        ft.add(R.id.main_frame,fragment, HomePageFragment.TAG);
         ft.hide(fragment);
         ft.commit();
     }

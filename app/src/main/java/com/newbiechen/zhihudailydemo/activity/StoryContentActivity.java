@@ -8,6 +8,8 @@ import com.newbiechen.androidlib.base.BaseActivity;
  * Created by PC on 2016/10/4.
  */
 public class StoryContentActivity extends BaseActivity {
+    public static final String EXTRA_URL = "url";
+
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
 

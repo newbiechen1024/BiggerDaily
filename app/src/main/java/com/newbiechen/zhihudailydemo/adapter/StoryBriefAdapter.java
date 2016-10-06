@@ -2,87 +2,89 @@ package com.newbiechen.zhihudailydemo.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.newbiechen.androidlib.base.BaseAdapter;
+import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.entity.StoriesBean;
-import com.newbiechen.zhihudailydemo.entity.StoryList;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.newbiechen.zhihudailydemo.entity.StoryBriefEntity;
 
 /**
  * Created by PC on 2016/10/4.
  */
-public class StoryBriefAdapter extends RecyclerView.Adapter<StoryBriefAdapter.StoryBriefViewHolder> {
-    private final List<StoryList> mStoryList = new ArrayList<>();
+public class StoryBriefAdapter extends BaseAdapter<StoryBriefEntity,StoryBriefAdapter.StoryBriefViewHolder>{
+    private static final String TAG = "StoryBriefAdapter";
+
     private Context mContext;
-    private OnItemClickListener mListener;
-    public StoryBriefAdapter (Context context){
+
+    public StoryBriefAdapter(Context context){
         mContext = context;
     }
-
     @Override
     public StoryBriefViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_story_list,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_story_brief,parent,false);
         return new StoryBriefViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(StoryBriefViewHolder holder, int position) {
-        holder.tvDate.setText(mStoryList.get(position).getDate());
-        List<StoriesBean> storiesBean = mStoryList.get(position).getStories();
-        addStoryBrief2List((ViewGroup) holder.itemView,storiesBean);
-    }
-
-    private void addStoryBrief2List(ViewGroup viewGroup,List<StoriesBean> storiesBean){
-        for (StoriesBean bean : storiesBean){
-            View view = LayoutInflater.from(mContext).inflate(R.layout.list_story_brief,viewGroup,false);
-            TextView title = (TextView) view.findViewById(R.id.brief_tv_title);
-            title.setText(bean.getTitle());
-            viewGroup.addView(view);
-            //添加监听器
-            if (mListener != null){
-                mListener.onItemClick(bean.getId());
-            }
+    public void setUpViewHolder(StoryBriefViewHolder holder, int position) {
+        StoryBriefEntity entity = mItemList.get(position);
+        if (entity.getType() == StoryBriefEntity.TYPE_DATE){
+            //隐藏StoryBrief显示卡片
+            holder.rlStory.setVisibility(View.GONE);
+            holder.tvDate.setVisibility(View.VISIBLE);
+            //添加数据
+            holder.tvDate.setText(entity.getDate());
+        }
+        else if (entity.getType() == StoryBriefEntity.TYPE_STORY_BRIEF){
+            //隐藏日期
+            holder.tvDate.setVisibility(View.GONE);
+            holder.rlStory.setVisibility(View.VISIBLE);
+            //添加数据
+            StoriesBean bean = entity.getStoriesBean();
+            holder.tvTitle.setText(bean.getTitle());
+            /*********************************/
+            //添加图片
+            int imageWidth = (int) mContext.getResources().
+                    getDimension(R.dimen.story_brief_icon_width);
+            int imageHeight = (int) mContext.getResources().
+                    getDimension(R.dimen.story_brief_icon_height);
+            //异步加载数据
+            ImageLoader.getInstance(mContext).bindImageFromUrl(
+                    bean.getImages().get(0),holder.ivIcon,
+                    imageWidth,imageHeight
+            );
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return mStoryList.size();
-    }
+    public class StoryBriefViewHolder extends RecyclerView.ViewHolder{
+        private View itemView;
 
-    class StoryBriefViewHolder extends RecyclerView.ViewHolder{
         TextView tvDate;
+        RelativeLayout rlStory;
+        TextView tvTitle;
+        ImageView ivIcon;
+        ImageView ivMoreImg;
         public StoryBriefViewHolder(View itemView) {
             super(itemView);
-            tvDate = (TextView) itemView.findViewById(R.id.list_tv_date);
+            this.itemView = itemView;
+
+            tvDate = getViewById(R.id.brief_tv_date);
+            rlStory = getViewById(R.id.brief_rl_story);
+            tvTitle = getViewById(R.id.brief_tv_title);
+            ivIcon = getViewById(R.id.brief_iv_icon);
+            ivMoreImg = getViewById(R.id.brief_iv_more_img);
         }
-    }
 
-    /**
-     * 点击回调接口
-     */
-    public interface OnItemClickListener{
-        void onItemClick(int id);
-    }
-
-    /********************public**********************************/
-    public void addStoryList(StoryList storyList){
-        mStoryList.add(storyList);
-        notifyDataSetChanged();
-    }
-
-    public void refreshStoryList(StoryList storyList){
-        mStoryList.clear();
-        addStoryList(storyList);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener){
-        mListener = listener;
+        public <T extends View> T getViewById(int id){
+            return (T) itemView.findViewById(id);
+        }
     }
 }

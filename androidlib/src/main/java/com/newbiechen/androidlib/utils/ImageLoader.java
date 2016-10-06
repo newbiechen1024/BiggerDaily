@@ -107,7 +107,7 @@ public class ImageLoader {
         try {
             //同步获取数据
             Response response = RemoteService.getInstance(mContext).loadData(url,null,null);
-            if (response.isSuccessful()){
+            if (response != null && response.isSuccessful()){
                 //获取数据流(不直接获取String是因为，数据太大，不合适)
                 is = response.body().byteStream();
                 if (isDiskCacheExist){
@@ -121,14 +121,14 @@ public class ImageLoader {
             else {
                 Log.d(TAG,"获取数据失败");
             }
+            if (isDiskCacheExist){
+                bitmap = getBitmapFromDiskCache(url,reqWidth,reqHeight);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG,"网络加载失败");
         } finally {
             IOUtils.closeStream(is);
-        }
-        if (isDiskCacheExist){
-            bitmap = getBitmapFromDiskCache(url,reqWidth,reqHeight);
         }
         return bitmap;
     }
@@ -293,6 +293,11 @@ public class ImageLoader {
         return bitmap;
     }
 
+    public void loadImageFromUrl(final String urlPath){
+        loadImageFromUrl(urlPath,MetricsUtils.getScreenWidth(),
+                MetricsUtils.getScreenHeight(),null);
+    }
+
     /**
      * 直接加载图片数据，不经过缓存查询
      * @param urlPath
@@ -307,10 +312,15 @@ public class ImageLoader {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                //直接加载数据
-                Bitmap bitmap = loadBitmapFromUrl(urlPath,reqWidth,reqHeight);
+
                 if (callback != null){
+                    //经过缓存加载数据
+                    Bitmap bitmap = loadBitmap(urlPath,reqWidth,reqHeight);
                     callback.onImageLoad(bitmap);
+                }
+                else {
+                    /********不经过缓存直接加载数据*******/
+                    loadBitmapFromUrl(urlPath,reqWidth,reqHeight);
                 }
             }
         };

@@ -55,10 +55,14 @@ public class ImageResize {
         int sampleSize = 1;
         int width = options.outWidth;
         int height = options.outHeight;
-        while (width/sampleSize > reqWidth ||
-                height/sampleSize > reqHeight){
-            //一般使用2的倍数来进行缩放
-            sampleSize *= 2;
+
+        if (width/2 > reqWidth || height/2 > reqHeight){
+            sampleSize = 2;
+            while (width/sampleSize > reqWidth ||
+                    height/sampleSize > reqHeight){
+                //一般使用2的倍数来进行缩放
+                sampleSize *= 2;
+            }
         }
         return sampleSize;
     }

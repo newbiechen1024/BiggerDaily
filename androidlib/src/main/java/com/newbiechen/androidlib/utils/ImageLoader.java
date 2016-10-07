@@ -5,12 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jakewharton.disklrucache.DiskLruCache;
+import com.newbiechen.androidlib.R;
 import com.newbiechen.androidlib.net.RemoteService;
 
 import java.io.File;
@@ -35,6 +37,8 @@ public class ImageLoader {
     private static final String TAG = "ImageLoader";
     //二级缓存的名字
     private static final String CACHE_FILE_NAME = "bitmap";
+    //ImageView的TAG
+    private static final int WHAT_SHOW_IMG = 1;
     //50MB
     private static final long DISK_CACHE_SIZE = 50 * 1024 * 1024;
 
@@ -44,7 +48,26 @@ public class ImageLoader {
 
     private static ImageLoader sImageLoader;
 
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper()){
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case WHAT_SHOW_IMG:
+                    LoaderResult result = (LoaderResult) msg.obj;
+                    ImageView imageView = result.imageView;
+                    String urlPath = (String) imageView.getTag();
+                    if (urlPath.equals(result.urlPath)){
+                        imageView.setImageBitmap(result.bitmap);
+                    }
+                    else {
+                        Log.w(TAG,"The picture already exist");
+                    }
+                    break;
+            }
+        }
+    };
 
     private LruCache<String,Bitmap> mLruCache;
     private DiskLruCache mDiskCache;
@@ -230,6 +253,12 @@ public class ImageLoader {
     public interface Callback {
         void onImageLoad(Bitmap bitmap);
     }
+
+    class LoaderResult{
+        String urlPath;
+        ImageView imageView;
+        Bitmap bitmap;
+    }
     /*****************************公共的方法*************************************/
 
     /**
@@ -353,7 +382,18 @@ public class ImageLoader {
                     @Override
                     public void run() {
                         if (bitmap != null){
-                            imageView.setImageBitmap(bitmap);
+                            imageView.setTag(url);
+
+                            LoaderResult result = new LoaderResult();
+                            result.urlPath = url;
+                            result.imageView = imageView;
+                            result.bitmap = bitmap;
+
+                            Message message = mHandler.obtainMessage();
+                            message.what = WHAT_SHOW_IMG;
+                            message.obj = result;
+
+                            mHandler.sendMessage(message);
                         }
                     }
                 });

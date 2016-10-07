@@ -1,6 +1,7 @@
 package com.newbiechen.androidlib.base;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 
 import com.newbiechen.androidlib.net.RemoteService;
 
+import org.litepal.tablemanager.Connector;
+
 /**
  * Created by PC on 2016/9/9.
  */
@@ -17,12 +20,14 @@ public abstract class BaseFragment extends Fragment {
     protected View view ;
 
     protected RemoteService mRemoteService;
+    protected SQLiteDatabase mDataBase;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = onCreateContentView(inflater,container,savedInstanceState);
         initView();
         mRemoteService = RemoteService.getInstance(getContext());
+        mDataBase = Connector.getDatabase();
         initWidget();
         initClick();
         processLogic(savedInstanceState);

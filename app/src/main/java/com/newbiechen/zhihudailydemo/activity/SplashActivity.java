@@ -1,6 +1,5 @@
 package com.newbiechen.zhihudailydemo.activity;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.entity.SplashImageEntity;
+import com.newbiechen.zhihudailydemo.utils.SharedPresManager;
 import com.newbiechen.zhihudailydemo.utils.URLManager;
 import com.newbiechen.zhihudailydemo.widget.IconView;
 
@@ -30,8 +30,6 @@ import com.newbiechen.zhihudailydemo.widget.IconView;
 public class SplashActivity extends BaseActivity {
     private static final String TAG = "SplashActivity";
 
-    private static final String SPLASH_IMG = "splash_img";
-    private static final String NO_NETWORK = "NoNetWork";
     private RelativeLayout mRlShowContent;
     private IconView mIvShowLogo;
     private ImageView mIvShowPic;
@@ -133,32 +131,39 @@ public class SplashActivity extends BaseActivity {
      * 设置图片显示的动画
      */
     private void showSplashImg(){
+        //获取图片的最新地址,并加载到缓存
         RemoteCallback callback = new RemoteCallback(){
-            @Override
-            public void onRemoteFailure() {
-                String urlPath = SharedPreferenceUtils.
-                        getData(SplashActivity.this,SPLASH_IMG,NO_NETWORK);
-                setUpImgAnim(urlPath);
-            }
-
             @Override
             public void onResponse(String data) {
                 Gson gson = new Gson();
                 SplashImageEntity entity = gson.fromJson(data,SplashImageEntity.class);
-                SharedPreferenceUtils.
-                        saveData(SplashActivity.this,SPLASH_IMG,entity.getImg());
-                setUpImgAnim(entity.getImg());
+                String splashUrlPath = entity.getImg();
+                if (!splashUrlPath.equals(SharedPreferenceUtils.
+                        getData(SplashActivity.this,
+                                SharedPresManager.PRES_SPLASH_IMG_URL,""))){
+                    //存储图片路径
+                    SharedPreferenceUtils.
+                            saveData(SplashActivity.this,
+                                    SharedPresManager.PRES_SPLASH_IMG_URL,splashUrlPath);
+                    //加载图片到缓存
+                    mImageLoader.loadImageFromUrl(splashUrlPath);
+                }
             }
         };
         //远程调用
         RemoteService.getInstance(this).loadData(URLManager.SPLASH_IMG_PATH,callback);
+        //加载图片
+        setUpImgAnim();
     }
 
     /**
      * 设置图片显示的动画
-     * @param urlPath
      */
-    private void setUpImgAnim(String urlPath){
+    private void setUpImgAnim(){
+        //从缓存中获取地址
+        String urlPath = SharedPreferenceUtils.
+                getData(SplashActivity.this,
+                        SharedPresManager.PRES_SPLASH_IMG_URL,"");
         //首先判断缓存中是否存在图片数据
         Bitmap bitmap = mImageLoader.getBitmapFromDiskCache(urlPath);
         if (bitmap != null){
@@ -166,11 +171,6 @@ public class SplashActivity extends BaseActivity {
         }
         else {
             mIvShowPic.setImageResource(R.mipmap.splash_pic);
-            //第一次加载没网环境下，不加载
-            if (urlPath != NO_NETWORK){
-                //并加载图片数据
-                mImageLoader.loadImageFromUrl(urlPath);
-            }
         }
 
         //添加逐渐显示效果，过渡

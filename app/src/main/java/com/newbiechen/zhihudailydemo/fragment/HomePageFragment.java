@@ -1,28 +1,43 @@
 package com.newbiechen.zhihudailydemo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
+import android.util.StringBuilderPrinter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
+import com.newbiechen.androidlib.base.BaseAdapter;
 import com.newbiechen.androidlib.base.BaseFragment;
 import com.newbiechen.androidlib.net.RemoteService;
+import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.zhihudailydemo.R;
+import com.newbiechen.zhihudailydemo.activity.StoryContentActivity;
 import com.newbiechen.zhihudailydemo.adapter.StoryBriefAdapter;
 import com.newbiechen.zhihudailydemo.entity.LastNewsEntity;
 import com.newbiechen.zhihudailydemo.entity.LastNewsEntity.*;
 import com.newbiechen.zhihudailydemo.entity.BeforeNewsEntity;
 import com.newbiechen.zhihudailydemo.entity.StoriesBean;
 import com.newbiechen.zhihudailydemo.entity.StoryBriefEntity;
+import com.newbiechen.zhihudailydemo.model.BriefImageEntity;
 import com.newbiechen.zhihudailydemo.utils.DateUtils;
+import com.newbiechen.zhihudailydemo.utils.SharedPresManager;
 import com.newbiechen.zhihudailydemo.utils.URLManager;
 import com.yyydjk.library.BannerLayout;
 
+import org.litepal.crud.DataSupport;
+
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,7 +69,41 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
         mGson = new Gson();
         setUpBannerAdv();
         setUpRecyclerView();
-        refreshData();
+        //首先从数据库中获取数据
+        refreshDataFromDb();
+        //从网络中加载数据
+        refreshDataFromUrl();
+    }
+
+    private void refreshDataFromDb(){
+        //添加广告图片
+        String bannerUrls = SharedPreferenceUtils.getData(getContext(),
+                SharedPresManager.PRES_BANNER_IMG_URL,"");
+        String [] bannerUrl = bannerUrls.split(",");
+        if (!bannerUrl.equals("")){
+            List<String> imgUrls = Arrays.asList(bannerUrl);
+            mBannerAdv.setViewUrls(imgUrls);
+        }
+
+        //获取全部的entity
+        List<StoryBriefEntity> storyBriefEntities = DataSupport.findAll(StoryBriefEntity.class,true);
+        //获取图片的地址 - -
+        for (StoryBriefEntity entity : storyBriefEntities){
+           if (entity.getStoriesBean() != null){
+               int content_id = entity.getStoriesBean().getId();
+               List<BriefImageEntity> imageEntities = DataSupport.findAll(BriefImageEntity.class);
+               List<String> imgUrls = new ArrayList<>();
+               for(BriefImageEntity imageEntity : imageEntities){
+                   if (content_id == imageEntity.getStoryBean_id()){
+                       imgUrls.add(imageEntity.getImgUrl());
+                   }
+               }
+               entity.getStoriesBean().setImages(imgUrls);
+           }
+        }
+        mAdapter.addItems(storyBriefEntities);
+
+
     }
 
     @Override
@@ -67,10 +116,11 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
             }
         });
 
-      /*  mAdapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
             @Override
             public void itemClick(View view, int pos) {
                 StoryBriefEntity entity = mAdapter.getItem(pos);
+
                 if (entity.getType() == StoryBriefEntity.TYPE_STORY_BRIEF){
                     //详情页面的地址
                     String urlPath = URLManager.STORY_CONTENT +
@@ -81,7 +131,7 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
                     startActivity(intent);
                 }
             }
-        });*/
+        });
     }
 
     @Override
@@ -111,7 +161,7 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
         mPtrrvRefresh.setAdapter(mAdapter);
     }
 
-    private void refreshData(){
+    private void refreshDataFromUrl(){
         RemoteService.RemoteCallback callback = new RemoteService.RemoteCallback() {
             @Override
             public void onResponse(String data) {
@@ -147,6 +197,7 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
                 beforeNewsEntity.setDate(DateUtils.parseDateStr(dateStr));
                 //添加数据
                 mAdapter.addItems(getStoryBriefEntities(beforeNewsEntity));
+                //添加到数据库中
                 //完成加载
                 mPtrrvRefresh.setOnLoadMoreComplete();
                 mPtrrvRefresh.onFinishLoading(true,false);
@@ -159,9 +210,13 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
     private void addData2Banner(LastNewsEntity lastNewsEntity){
         List<TopStoriesBean> topStoriesBean = lastNewsEntity.getTop_stories();
         List<String> imgUrls = new ArrayList<>();
+        StringBuilder bannerUrls = new StringBuilder();
         for (TopStoriesBean bean : topStoriesBean){
             imgUrls.add(bean.getImage());
+            bannerUrls.append(bean.getImage()+",");
         }
+        SharedPreferenceUtils.saveData(getContext(),
+                SharedPresManager.PRES_BANNER_IMG_URL,bannerUrls.toString());
         mBannerAdv.setViewUrls(imgUrls);
     }
 
@@ -185,11 +240,45 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
 
     @Override
     public void onRefresh() {
-        refreshData();
+        refreshDataFromUrl();
     }
 
     @Override
     public void onLoadMoreItems() {
         loadData();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        saveData2Db();
+
+    }
+
+    private void saveData2Db(){
+        //判断是否数据不为0，不为0则清空数据库，然后再添加数据
+        if (mAdapter.getItemCount() != 0){
+            //首先清空数据库
+            DataSupport.deleteAll(StoriesBean.class);
+            DataSupport.deleteAll(StoryBriefEntity.class);
+            DataSupport.deleteAll(BriefImageEntity.class);
+            //然后保存
+            List<StoryBriefEntity> storyBriefEntities = mAdapter.getItems();
+            for (StoryBriefEntity entity : storyBriefEntities){
+                //保存数据
+                if(entity.getStoriesBean() != null){
+                    entity.getStoriesBean().save();
+                    List<String> imageUrls = entity.getStoriesBean().getImages();
+                    for (String imageUrl : imageUrls){
+                        BriefImageEntity imageEntity = new BriefImageEntity();
+                        imageEntity.setImgUrl(imageUrl);
+                        imageEntity.setStoryBean_id(entity.getStoriesBean().getId());
+                        imageEntity.save();
+                    }
+                }
+                entity.save();
+            }
+        }
+    }
+
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="zhihudaily"></dbname>
+    <version value="1"></version>
+
+    <list>
+        <mapping class="com.newbiechen.zhihudailydemo.entity.StoriesBean"></mapping>
+        <mapping class="com.newbiechen.zhihudailydemo.entity.StoryBriefEntity"></mapping>
+        <mapping class="com.newbiechen.zhihudailydemo.model.BriefImageEntity"></mapping>
+    </list>
+</litepal>

@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
-        android:name="AppService"
+        android:name=".ZhiHuApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -21,6 +21,11 @@
         </activity>
 
         <activity android:name=".activity.MainActivity">
+        </activity>
+
+        <activity android:name=".activity.StoryContentActivity"
+            android:parentActivityName=".activity.MainActivity">
+
         </activity>
 
       <!--  <activity android:name=".activity.MainActivity">

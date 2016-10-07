@@ -1,13 +1,19 @@
 package com.newbiechen.zhihudailydemo.entity;
 
+import com.google.gson.annotations.SerializedName;
+
+import org.litepal.annotation.Column;
+import org.litepal.crud.DataSupport;
+
 import java.util.List;
 
 /**
  * Created by PC on 2016/10/4.
  */
-public class StoriesBean {
+public class StoriesBean extends DataSupport{
+    @SerializedName(value = "id")
+    private int content_id;
     private int type;
-    private int id;
     private String ga_prefix;
     private String title;
     private List<String> images;
@@ -21,11 +27,11 @@ public class StoriesBean {
     }
 
     public int getId() {
-        return id;
+        return content_id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.content_id = id;
     }
 
     public String getGa_prefix() {

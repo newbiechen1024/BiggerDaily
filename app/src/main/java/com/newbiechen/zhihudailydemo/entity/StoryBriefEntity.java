@@ -1,10 +1,12 @@
 package com.newbiechen.zhihudailydemo.entity;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by PC on 2016/10/6.
  */
 
-public class StoryBriefEntity {
+public class StoryBriefEntity extends DataSupport{
     /*显示日期*/
     public static final int TYPE_DATE = 0;
     /*显示文章*/
@@ -15,7 +17,6 @@ public class StoryBriefEntity {
     private StoriesBean storiesBean;
 
     private int type;
-
 
     public StoriesBean getStoriesBean() {
         return storiesBean;

@@ -2,7 +2,9 @@ package com.newbiechen.androidlib.base;
 
 import android.view.View;
 
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.*;
@@ -100,6 +102,10 @@ public abstract class BaseAdapter <E,VH extends ViewHolder>extends Adapter<VH> {
 
     public E getItem(int position){
         return mItemList.get(position);
+    }
+
+    public List<E> getItems(){
+        return Collections.unmodifiableList(mItemList);
     }
 }
 

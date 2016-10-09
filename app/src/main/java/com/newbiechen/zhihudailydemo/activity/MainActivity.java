@@ -42,7 +42,7 @@ public class MainActivity extends AppBaseActivity {
         setContentView(R.layout.activity_main);
 
         mDrawerLayout = getViewById(R.id.main_drawer);
-        mLvSlide = getViewById(R.id.main_nav_slide);
+        mLvSlide = getViewById(R.id.main_lv_slide);
     }
 
 

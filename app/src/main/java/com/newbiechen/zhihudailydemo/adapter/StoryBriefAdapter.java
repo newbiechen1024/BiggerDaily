@@ -1,9 +1,7 @@
 package com.newbiechen.zhihudailydemo.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +11,9 @@ import android.widget.TextView;
 
 import com.newbiechen.androidlib.base.BaseAdapter;
 import com.newbiechen.androidlib.utils.ImageLoader;
-import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.zhihudailydemo.R;
-import com.newbiechen.zhihudailydemo.entity.StoriesBean;
+import com.newbiechen.zhihudailydemo.entity.StoriesEntity;
 import com.newbiechen.zhihudailydemo.entity.StoryBriefEntity;
-
-import java.util.List;
 
 /**
  * Created by PC on 2016/10/4.
@@ -31,6 +26,7 @@ public class StoryBriefAdapter extends BaseAdapter<StoryBriefEntity,StoryBriefAd
 
     public StoryBriefAdapter(Context context){
         mContext = context;
+        ImageLoader.getInstance(mContext).setDefaultBg(R.drawable.image_small_default);
     }
 
     @Override
@@ -54,7 +50,7 @@ public class StoryBriefAdapter extends BaseAdapter<StoryBriefEntity,StoryBriefAd
             holder.tvDate.setVisibility(View.GONE);
             holder.rlStory.setVisibility(View.VISIBLE);
             //添加数据
-            StoriesBean bean = entity.getStoriesBean();
+            StoriesEntity bean = entity.getStoriesEntity();
             holder.tvTitle.setText(bean.getTitle());
 
             //添加图片

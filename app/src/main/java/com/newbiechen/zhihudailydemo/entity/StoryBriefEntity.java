@@ -14,16 +14,16 @@ public class StoryBriefEntity extends DataSupport{
 
     private String date;
 
-    private StoriesBean storiesBean;
+    private StoriesEntity storiesEntity;
 
     private int type;
 
-    public StoriesBean getStoriesBean() {
-        return storiesBean;
+    public StoriesEntity getStoriesEntity() {
+        return storiesEntity;
     }
 
-    public void setStoriesBean(StoriesBean storiesBean) {
-        this.storiesBean = storiesBean;
+    public void setStoriesEntity(StoriesEntity storiesEntity) {
+        this.storiesEntity = storiesEntity;
     }
 
     public String getDate() {
@@ -45,7 +45,7 @@ public class StoryBriefEntity extends DataSupport{
     @Override
     public String toString() {
         return "Story{" +
-                "storiesBean=" + storiesBean +
+                "storiesBean=" + storiesEntity +
                 ", date='" + date + '\'' +
                 ", type=" + type +
                 '}';

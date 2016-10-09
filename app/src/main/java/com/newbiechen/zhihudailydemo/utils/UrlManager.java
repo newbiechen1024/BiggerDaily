@@ -8,4 +8,5 @@ public class URLManager {
     public static final String HOMEPAGE_LAST_NEWS= "http://news-at.zhihu.com/api/4/news/latest";
     public static final String HOMEPAGE_BEFORE_NEWS = "http://news.at.zhihu.com/api/4/news/before/";
     public static final String STORY_CONTENT = "http://news-at.zhihu.com/api/4/news/";
+    public static final String THEME_TYPE = "http://news-at.zhihu.com/api/4/themes";
 }

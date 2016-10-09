@@ -3,6 +3,7 @@ package com.newbiechen.zhihudailydemo.activity;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -11,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.newbiechen.androidlib.base.BaseActivity;
 
 
@@ -18,6 +22,7 @@ import com.newbiechen.androidlib.net.RemoteService;
 import com.newbiechen.androidlib.net.RemoteService.*;
 import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
+import com.newbiechen.androidlib.utils.StringUtils;
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.entity.SplashImageEntity;
 import com.newbiechen.zhihudailydemo.utils.SharedPresManager;
@@ -136,14 +141,13 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void onResponse(String data) {
                 Gson gson = new Gson();
-                SplashImageEntity entity = gson.fromJson(data,SplashImageEntity.class);
-                String splashUrlPath = entity.getImg();
-                if (!splashUrlPath.equals(SharedPreferenceUtils.
-                        getData(SplashActivity.this,
-                                SharedPresManager.PRES_SPLASH_IMG_URL,""))){
+                //判断获取的data是否为json数据(移动的随意行会拦截数据，返回随意行网页)
+                //教训：当用到json数据的时候，首先需要判断string是否为json格式
+                if (StringUtils.isGoodJson(data)){
+                    SplashImageEntity entity = gson.fromJson(data,SplashImageEntity.class);
+                    String splashUrlPath = entity.getImg();
                     //存储图片路径
-                    SharedPreferenceUtils.
-                            saveData(SplashActivity.this,
+                    SharedPreferenceUtils.saveData(SplashActivity.this,
                                     SharedPresManager.PRES_SPLASH_IMG_URL,splashUrlPath);
                     //加载图片到缓存
                     mImageLoader.loadImageFromUrl(splashUrlPath);

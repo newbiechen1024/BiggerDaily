@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by PC on 2016/10/4.
  */
-public class StoriesBean extends DataSupport{
+public class StoriesEntity extends DataSupport{
     @SerializedName(value = "id")
     private int content_id;
     private int type;

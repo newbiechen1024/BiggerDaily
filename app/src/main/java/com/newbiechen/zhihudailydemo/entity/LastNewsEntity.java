@@ -21,7 +21,7 @@ public class LastNewsEntity {
      * title : 粗中有细的生疏凉拌，那就是乡土版的蔬菜沙拉啊
      */
 
-    private List<StoriesBean> stories;
+    private List<StoriesEntity> stories;
     /**
      * image : http://pic3.zhimg.com/26aff97ded87a80fd83c018b55d6a506.jpg
      * type : 0
@@ -30,7 +30,7 @@ public class LastNewsEntity {
      * title : 真想锻炼，上个厕所的时间都能练出好身材
      */
 
-    private List<TopStoriesBean> top_stories;
+    private List<TopStoriesEntity> top_stories;
 
     public String getDate() {
         return date;
@@ -40,67 +40,19 @@ public class LastNewsEntity {
         this.date = date;
     }
 
-    public List<StoriesBean> getStories() {
+    public List<StoriesEntity> getStories() {
         return stories;
     }
 
-    public void setStories(List<StoriesBean> stories) {
+    public void setStories(List<StoriesEntity> stories) {
         this.stories = stories;
     }
 
-    public List<TopStoriesBean> getTop_stories() {
+    public List<TopStoriesEntity> getTop_stories() {
         return top_stories;
     }
 
-    public void setTop_stories(List<TopStoriesBean> top_stories) {
+    public void setTop_stories(List<TopStoriesEntity> top_stories) {
         this.top_stories = top_stories;
-    }
-
-    public static class TopStoriesBean {
-        private String image;
-        private int type;
-        private int id;
-        private String ga_prefix;
-        private String title;
-
-        public String getImage() {
-            return image;
-        }
-
-        public void setImage(String image) {
-            this.image = image;
-        }
-
-        public int getType() {
-            return type;
-        }
-
-        public void setType(int type) {
-            this.type = type;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getGa_prefix() {
-            return ga_prefix;
-        }
-
-        public void setGa_prefix(String ga_prefix) {
-            this.ga_prefix = ga_prefix;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
     }
 }

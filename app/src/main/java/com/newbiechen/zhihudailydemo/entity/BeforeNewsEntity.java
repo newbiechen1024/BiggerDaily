@@ -21,7 +21,7 @@ public class BeforeNewsEntity {
      * title : 深夜食堂 · 要生活片吗？
      */
 
-    private List<StoriesBean> stories;
+    private List<StoriesEntity> stories;
 
     public String getDate() {
         return date;
@@ -31,11 +31,11 @@ public class BeforeNewsEntity {
         this.date = date;
     }
 
-    public List<StoriesBean> getStories() {
+    public List<StoriesEntity> getStories() {
         return stories;
     }
 
-    public void setStories(List<StoriesBean> stories) {
+    public void setStories(List<StoriesEntity> stories) {
         this.stories = stories;
     }
 }

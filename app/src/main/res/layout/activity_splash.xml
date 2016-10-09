@@ -29,7 +29,7 @@
             android:id="@+id/splash_tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/splash_fl_logo_anim"
+            android:layout_toRightOf="@+id/splash_fl_logo_anim"
             android:layout_alignTop="@+id/splash_fl_logo_anim"
             android:layout_marginTop="2dp"
             android:text="@string/app_name"

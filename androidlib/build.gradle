@@ -31,4 +31,5 @@ dependencies {
     compile 'com.squareup.okio:okio:1.10.0'
     //数据库
     compile 'org.litepal.android:core:1.3.2'
+    compile 'com.google.code.gson:gson:2.7'
 }

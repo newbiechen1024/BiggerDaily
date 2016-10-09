@@ -21,6 +21,7 @@ public abstract class BaseFragment extends Fragment {
 
     protected RemoteService mRemoteService;
     protected SQLiteDatabase mDataBase;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

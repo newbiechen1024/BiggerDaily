@@ -35,6 +35,6 @@ class ImageThreadPool extends ThreadPoolExecutor {
     };
 
     public ImageThreadPool() {
-        super(CORE_THREAD_SIZE, MAX_THREAD_SIZE, ALIVE_TIME, TimeUnit.MILLISECONDS, QUEUE, FACTORY);
+        super(CORE_THREAD_SIZE, Integer.MAX_VALUE, ALIVE_TIME, TimeUnit.MILLISECONDS, QUEUE, FACTORY);
     }
 }

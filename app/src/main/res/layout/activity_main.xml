@@ -8,12 +8,11 @@
     tools:context=".activity.MainActivity">
 
     <!--侧滑栏-->
-    <android.support.design.widget.NavigationView
-        android:id="@+id/main_nav_slide"
-        android:layout_width="@dimen/slide_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="left"
-        app:headerLayout="@layout/slide_header"/>
+    <ListView
+        android:id="@+id/main_lv_slide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
 
     <!--内容栏-->
     <LinearLayout

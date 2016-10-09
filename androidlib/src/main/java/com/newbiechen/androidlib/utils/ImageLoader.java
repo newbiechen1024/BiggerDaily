@@ -62,7 +62,8 @@ public class ImageLoader {
                         imageView.setImageBitmap(result.bitmap);
                     }
                     else {
-                        Log.w(TAG,"The picture already exist");
+                        Log.w(TAG,"The picture is already created");
+                        imageView.setImageResource(mDefaultImgResource);
                     }
                     break;
             }
@@ -74,6 +75,7 @@ public class ImageLoader {
     private Context mContext;
 
     private boolean isDiskCacheExist = true;
+    private int mDefaultImgResource;
 
     private ImageLoader(Context context){
         mContext = context;
@@ -374,6 +376,7 @@ public class ImageLoader {
      * @param imageView     显示图片的控件
      */
     public void bindImageFromUrl(final String url, final ImageView imageView, final int reqWidth, final int reqHeight){
+        imageView.setImageResource(mDefaultImgResource);
         Runnable runnable = new Runnable(){
             @Override
             public void run() {
@@ -395,6 +398,10 @@ public class ImageLoader {
 
                             mHandler.sendMessage(message);
                         }
+                        else {
+                            //设置为默认图片
+                            imageView.setImageResource(mDefaultImgResource);
+                        }
                     }
                 });
             }
@@ -402,5 +409,8 @@ public class ImageLoader {
         THREAD_POOL.execute(runnable);
     }
 
+    public void setDefaultBg(int imgResource){
+        mDefaultImgResource = imgResource;
+    }
 
 }

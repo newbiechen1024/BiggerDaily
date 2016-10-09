@@ -4,40 +4,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
-import android.util.StringBuilderPrinter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.newbiechen.androidlib.base.BaseAdapter;
 import com.newbiechen.androidlib.base.BaseFragment;
 import com.newbiechen.androidlib.net.RemoteService;
-import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
+import com.newbiechen.androidlib.utils.StringUtils;
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.activity.StoryContentActivity;
 import com.newbiechen.zhihudailydemo.adapter.StoryBriefAdapter;
 import com.newbiechen.zhihudailydemo.entity.LastNewsEntity;
-import com.newbiechen.zhihudailydemo.entity.LastNewsEntity.*;
 import com.newbiechen.zhihudailydemo.entity.BeforeNewsEntity;
-import com.newbiechen.zhihudailydemo.entity.StoriesBean;
+import com.newbiechen.zhihudailydemo.entity.StoriesEntity;
 import com.newbiechen.zhihudailydemo.entity.StoryBriefEntity;
+import com.newbiechen.zhihudailydemo.entity.TopStoriesEntity;
 import com.newbiechen.zhihudailydemo.model.BriefImageEntity;
 import com.newbiechen.zhihudailydemo.utils.DateUtils;
-import com.newbiechen.zhihudailydemo.utils.SharedPresManager;
 import com.newbiechen.zhihudailydemo.utils.URLManager;
 import com.yyydjk.library.BannerLayout;
 
 import org.litepal.crud.DataSupport;
 
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,8 +41,8 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
     private PullToRefreshRecyclerView mPtrrvRefresh;
     private BannerLayout mBannerAdv;
     private StoryBriefAdapter mAdapter;
+    private List<TopStoriesEntity> mTopStoriesList;
     private Gson mGson;
-
     private String mBeforeDate;
 
     @Override
@@ -61,13 +53,15 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
 
     @Override
     protected void initView() {
-        mPtrrvRefresh = getViewById(R.id.homepage_ptrrv_refresh);
+        mPtrrvRefresh = getViewById(R.id.ptrrv_refresh);
     }
 
     @Override
     protected void initWidget() {
         mGson = new Gson();
+        //设置广告在RefreshLayout上
         setUpBannerAdv();
+        //初始化RefreshLayout
         setUpRecyclerView();
         //首先从数据库中获取数据
         refreshDataFromDb();
@@ -77,44 +71,34 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
 
     private void refreshDataFromDb(){
         //添加广告图片
-        String bannerUrls = SharedPreferenceUtils.getData(getContext(),
-                SharedPresManager.PRES_BANNER_IMG_URL,"");
-        String [] bannerUrl = bannerUrls.split(",");
-        if (!bannerUrl.equals("")){
-            List<String> imgUrls = Arrays.asList(bannerUrl);
-            mBannerAdv.setViewUrls(imgUrls);
-        }
+        List<TopStoriesEntity> topStories = DataSupport.findAll(TopStoriesEntity.class);
+        addData2Banner(topStories);
 
         //获取全部的entity
         List<StoryBriefEntity> storyBriefEntities = DataSupport.findAll(StoryBriefEntity.class,true);
         //获取图片的地址 - -
         for (StoryBriefEntity entity : storyBriefEntities){
-           if (entity.getStoriesBean() != null){
-               int content_id = entity.getStoriesBean().getId();
-               List<BriefImageEntity> imageEntities = DataSupport.findAll(BriefImageEntity.class);
+           if (entity.getStoriesEntity() != null){
+               int content_id = entity.getStoriesEntity().getId();
+               List<BriefImageEntity> briefImages = DataSupport.findAll(BriefImageEntity.class);
                List<String> imgUrls = new ArrayList<>();
-               for(BriefImageEntity imageEntity : imageEntities){
+               for(BriefImageEntity imageEntity : briefImages){
                    if (content_id == imageEntity.getStoryBean_id()){
                        imgUrls.add(imageEntity.getImgUrl());
                    }
                }
-               entity.getStoriesBean().setImages(imgUrls);
+               entity.getStoriesEntity().setImages(imgUrls);
+           }
+           else{
+               //设置最远的日期
+               mBeforeDate = entity.getDate();
            }
         }
         mAdapter.addItems(storyBriefEntities);
-
-
     }
 
     @Override
     protected void initClick() {
-        //添加广告监听器
-        mBannerAdv.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-            @Override
-            public void onItemClick(int i) {
-
-            }
-        });
 
         mAdapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
             @Override
@@ -122,13 +106,9 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
                 StoryBriefEntity entity = mAdapter.getItem(pos);
 
                 if (entity.getType() == StoryBriefEntity.TYPE_STORY_BRIEF){
-                    //详情页面的地址
-                    String urlPath = URLManager.STORY_CONTENT +
-                            entity.getStoriesBean().getId();
-                    //跳转。
-                    Intent intent = new Intent(getContext(), StoryContentActivity.class);
-                    intent.putExtra(StoryContentActivity.EXTRA_URL,urlPath);
-                    startActivity(intent);
+                    StoriesEntity storiesEntity = entity.getStoriesEntity();
+                    startActivity2StoryContent(storiesEntity.getId(),
+                            storiesEntity.getTitle());
                 }
             }
         });
@@ -164,13 +144,24 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
     private void refreshDataFromUrl(){
         RemoteService.RemoteCallback callback = new RemoteService.RemoteCallback() {
             @Override
+            public void onRemoteFailure() {
+                super.onRemoteFailure();
+                //完成刷新
+                mPtrrvRefresh.setOnRefreshComplete();
+                mPtrrvRefresh.onFinishLoading(true,false);
+            }
+
+            @Override
             public void onResponse(String data) {
+                if (!StringUtils.isGoodJson(data)){
+                    return;
+                }
                 //解析数据
                 LastNewsEntity lastNewsEntity = mGson.fromJson(data,LastNewsEntity.class);
                 //设置下一个文章的日期
                 mBeforeDate = lastNewsEntity.getDate();
                 //添加数据到广告中
-                addData2Banner(lastNewsEntity);
+                addData2Banner(lastNewsEntity.getTop_stories());
                 //提取LastNews中的Story
                 BeforeNewsEntity beforeNewsEntity = new BeforeNewsEntity();
                 beforeNewsEntity.setDate(getResources().getString(R.string.hot_story));
@@ -180,8 +171,11 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
                 //完成刷新
                 mPtrrvRefresh.setOnRefreshComplete();
                 mPtrrvRefresh.onFinishLoading(true,false);
+                //刷新数据库
+                deleteDataFromDb();
             }
         };
+
         mRemoteService.loadData(URLManager.HOMEPAGE_LAST_NEWS,callback);
     }
 
@@ -189,6 +183,9 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
         RemoteService.RemoteCallback callback = new RemoteService.RemoteCallback() {
             @Override
             public void onResponse(String data) {
+                if (!StringUtils.isGoodJson(data)){
+                    return;
+                }
                 BeforeNewsEntity beforeNewsEntity = mGson.fromJson(data,BeforeNewsEntity.class);
                 //设置接下来的数据
                 mBeforeDate = beforeNewsEntity.getDate();
@@ -207,17 +204,29 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
         mRemoteService.loadData(urlPath,callback);
     }
 
-    private void addData2Banner(LastNewsEntity lastNewsEntity){
-        List<TopStoriesBean> topStoriesBean = lastNewsEntity.getTop_stories();
-        List<String> imgUrls = new ArrayList<>();
-        StringBuilder bannerUrls = new StringBuilder();
-        for (TopStoriesBean bean : topStoriesBean){
-            imgUrls.add(bean.getImage());
-            bannerUrls.append(bean.getImage()+",");
+    private void addData2Banner(final List<TopStoriesEntity> topStories){
+        if (topStories != null && topStories.size() > 0){
+            //后面存储使用的
+            mTopStoriesList = topStories;
+
+            List<String> imgUrls = new ArrayList<>();
+            for (TopStoriesEntity entity : topStories){
+                //获取网址
+                imgUrls.add(entity.getImage());
+            }
+            //显示图片
+            mBannerAdv.setViewUrls(imgUrls);
+            //添加广告监听器
+            mBannerAdv.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+                @Override
+                public void onItemClick(int i) {
+                    //页面的跳转
+                    TopStoriesEntity entity = mTopStoriesList.get(i);
+                    startActivity2StoryContent(entity.getId(),
+                            entity.getTitle());
+                }
+            });
         }
-        SharedPreferenceUtils.saveData(getContext(),
-                SharedPresManager.PRES_BANNER_IMG_URL,bannerUrls.toString());
-        mBannerAdv.setViewUrls(imgUrls);
     }
 
     private List<StoryBriefEntity> getStoryBriefEntities (BeforeNewsEntity entity){
@@ -228,10 +237,10 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
         dateEntity.setType(StoryBriefEntity.TYPE_DATE);
         storyBriefEntities.add(dateEntity);
         //设置StoryBriefEntity
-        List<StoriesBean> storiesBeans = entity.getStories();
-        for (StoriesBean bean : storiesBeans){
+        List<StoriesEntity> storiesEntities = entity.getStories();
+        for (StoriesEntity bean : storiesEntities){
             StoryBriefEntity contentEntity = new StoryBriefEntity();
-            contentEntity.setStoriesBean(bean);
+            contentEntity.setStoriesEntity(bean);
             contentEntity.setType(StoryBriefEntity.TYPE_STORY_BRIEF);
             storyBriefEntities.add(contentEntity);
         }
@@ -252,33 +261,44 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
     public void onDestroy() {
         super.onDestroy();
         saveData2Db();
+    }
 
+    private void startActivity2StoryContent(int id,String title){
+        //页面的跳转
+        Intent intent = new Intent(getContext(), StoryContentActivity.class);
+        intent.putExtra(StoryContentActivity.EXTRA_URL,id);
+        intent.putExtra(StoryContentActivity.EXTRA_TITLE,title);
+        startActivity(intent);
     }
 
     private void saveData2Db(){
-        //判断是否数据不为0，不为0则清空数据库，然后再添加数据
-        if (mAdapter.getItemCount() != 0){
-            //首先清空数据库
-            DataSupport.deleteAll(StoriesBean.class);
-            DataSupport.deleteAll(StoryBriefEntity.class);
-            DataSupport.deleteAll(BriefImageEntity.class);
-            //然后保存
-            List<StoryBriefEntity> storyBriefEntities = mAdapter.getItems();
-            for (StoryBriefEntity entity : storyBriefEntities){
-                //保存数据
-                if(entity.getStoriesBean() != null){
-                    entity.getStoriesBean().save();
-                    List<String> imageUrls = entity.getStoriesBean().getImages();
-                    for (String imageUrl : imageUrls){
-                        BriefImageEntity imageEntity = new BriefImageEntity();
-                        imageEntity.setImgUrl(imageUrl);
-                        imageEntity.setStoryBean_id(entity.getStoriesBean().getId());
-                        imageEntity.save();
-                    }
+        //存储广告
+        for (TopStoriesEntity topStory : mTopStoriesList){
+            topStory.save();
+        }
+        //存储数据
+        List<StoryBriefEntity> storyBriefEntities = mAdapter.getItems();
+        for (StoryBriefEntity entity : storyBriefEntities){
+            //保存数据
+            if(entity.getStoriesEntity() != null){
+                entity.getStoriesEntity().save();
+                List<String> imageUrls = entity.getStoriesEntity().getImages();
+                for (String imageUrl : imageUrls){
+                    BriefImageEntity imageEntity = new BriefImageEntity();
+                    imageEntity.setImgUrl(imageUrl);
+                    imageEntity.setStoryBean_id(entity.getStoriesEntity().getId());
+                    imageEntity.save();
                 }
-                entity.save();
             }
+            entity.save();
         }
     }
 
+    //清空数据库
+    private void deleteDataFromDb(){
+        DataSupport.deleteAll(StoriesEntity.class);
+        DataSupport.deleteAll(StoryBriefEntity.class);
+        DataSupport.deleteAll(BriefImageEntity.class);
+        DataSupport.deleteAll(TopStoriesEntity.class);
+    }
 }

@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
-import com.newbiechen.androidlib.R;
 import com.newbiechen.androidlib.net.RemoteService;
 
 /**
@@ -21,7 +19,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mRemoteService = RemoteService.getInstance(this);
         initWidget(savedInstanceState);
         initClick();
-        processLogin(savedInstanceState);
+        processLogic(savedInstanceState);
     }
 
     /************************需要继承的抽象类************************************/
@@ -41,7 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 逻辑使用区
      */
-    protected abstract void processLogin(Bundle savedInstanceState);
+    protected abstract void processLogic(Bundle savedInstanceState);
 
     /**************************公共类*******************************************/
     public <VT> VT getViewById(int id){

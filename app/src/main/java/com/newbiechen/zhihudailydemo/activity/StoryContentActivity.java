@@ -104,7 +104,7 @@ public class StoryContentActivity extends AppBaseActivity {
     }
 
     @Override
-    protected void processLogin(Bundle savedInstanceState) {
+    protected void processLogic(Bundle savedInstanceState) {
 
     }
 }

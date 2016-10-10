@@ -12,36 +12,8 @@ public class ThemeEntity {
      * id : 13
      * name : 日常心理学
      */
-
-    private int color;
-    private String thumbnail;
-    private String description;
     private int id;
     private String name;
-
-    public int getColor() {
-        return color;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public int getId() {
         return id;

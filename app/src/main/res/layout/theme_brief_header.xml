@@ -5,8 +5,8 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/header_iv_img"
         android:layout_width="match_parent"
+        android:id="@+id/header_iv_img"
         android:layout_height="@dimen/theme_brief_height"
         android:src="@drawable/image_top_default"
         android:scaleType="fitXY"/>
@@ -18,5 +18,7 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:paddingBottom="20dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         android:layout_alignBottom="@+id/header_iv_img"/>
 </RelativeLayout>

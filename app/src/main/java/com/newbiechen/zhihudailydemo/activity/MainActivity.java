@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -17,16 +19,29 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.newbiechen.androidlib.net.RemoteService;
+import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
+import com.newbiechen.androidlib.utils.StringUtils;
 import com.newbiechen.zhihudailydemo.R;
 import com.newbiechen.zhihudailydemo.adapter.ThemeMenuAdapter;
 import com.newbiechen.zhihudailydemo.base.AppBaseActivity;
 import com.newbiechen.zhihudailydemo.entity.ThemeEntity;
 import com.newbiechen.zhihudailydemo.fragment.HomePageFragment;
+import com.newbiechen.zhihudailydemo.fragment.ThemeBriefFragment;
+import com.newbiechen.zhihudailydemo.utils.SharedPresManager;
+import com.newbiechen.zhihudailydemo.utils.URLManager;
 
 import junit.framework.Test;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
 import java.util.List;
 
 public class MainActivity extends AppBaseActivity {
@@ -53,7 +68,7 @@ public class MainActivity extends AppBaseActivity {
         getSupportActionBar().setTitle(R.string.homepage);
         //让DrawLayout与Toolbar关联
         setUpToggle();
-        setUpListView();
+        setUpSlideLayout();
         //初始化Fragment
         initFragment(savedInstanceState);
     }
@@ -72,13 +87,57 @@ public class MainActivity extends AppBaseActivity {
         mToggle.syncState();
     }
 
-    private void setUpListView(){
+    /**
+     * 设置侧滑栏
+     */
+    private void setUpSlideLayout(){
         //添加头部
         View header = LayoutInflater.from(this)
-                .inflate(R.layout.slide_header,null,false);
+                .inflate(R.layout.slide_header,mLvSlide,false);
         mLvSlide.addHeaderView(header);
         mThemeMenuAdapter = new ThemeMenuAdapter(this);
         mLvSlide.setAdapter(mThemeMenuAdapter);
+    }
+
+    private void loadSlideData(){
+        //首先从SharedPreference中获取
+        String data = SharedPreferenceUtils.getData(this,SharedPresManager.
+                PRES_SLIDE_THEME_TYPE,"");
+        if (!data.equals("")){
+            addData2Slide(data);
+        }
+
+        //然后再从网络中获取(原因是，在弱网环境下，会展现不了侧滑菜单，所以需要从文档中获取数据。)
+        //网络获取数据，是保证数据是最新的
+        RemoteService.RemoteCallback callback = new RemoteService.RemoteCallback() {
+            @Override
+            public void onResponse(String data) {
+                if (!StringUtils.isGoodJson(data)){
+                    return;
+                }
+                addData2Slide(data);
+                //存储到SharedPreference，因为只需要利用一次就可以了，不需要存储到数据库
+                SharedPreferenceUtils.saveData(MainActivity.this,
+                        SharedPresManager.PRES_SLIDE_THEME_TYPE,data);
+            }
+        };
+        mRemoteService.loadData(URLManager.THEME_TYPE,callback);
+    }
+
+    private void addData2Slide(String data){
+
+        Gson gson = new Gson();
+        JSONArray jsonArray = null;
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            jsonArray = jsonObject.getJSONArray("others");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        List<ThemeEntity> themeEntities = gson.fromJson(jsonArray.toString(),
+                new TypeToken<List<ThemeEntity>>(){}.getType());
+        //加入到Adapter里面去
+        mThemeMenuAdapter.refreshItems(themeEntities);
     }
 
     @Override
@@ -86,13 +145,28 @@ public class MainActivity extends AppBaseActivity {
         mLvSlide.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                if (position == 1){
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.main_frame,
+                                    mHomePageFragment,HomePageFragment.TAG)
+                            .commit();
+                }
+                else if (position != 0){
+                    ThemeEntity entity = mThemeMenuAdapter.getItem(position-1);
+                    //切换Fragment
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.main_frame, ThemeBriefFragment.
+                                    newInstance(entity.getId()),ThemeBriefFragment.TAG)
+                            .commit();
+                }
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
     }
 
     @Override
-    protected void processLogin(Bundle savedInstanceState) {
+    protected void processLogic(Bundle savedInstanceState) {
+        loadSlideData();
     }
 
     /**
@@ -129,16 +203,19 @@ public class MainActivity extends AppBaseActivity {
         }
         else {
             mHomePageFragment = new HomePageFragment();
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.main_frame,mHomePageFragment)
+                    .commit();
             //添加到FrameLayout中
-            addFragment(mHomePageFragment);
+/*            addFragment(mHomePageFragment);*/
         }
 
 
-        //最后展现HomePageFragment
+/*        //最后展现HomePageFragment
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.show(mHomePageFragment);
         ft.commit();
-        mCurrentFragment = mHomePageFragment;
+        mCurrentFragment = mHomePageFragment;*/
     }
 
     private void addFragment(Fragment fragment){

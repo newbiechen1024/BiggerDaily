@@ -88,7 +88,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     @Override
-    protected void processLogin(Bundle savedInstanceState) {
+    protected void processLogic(Bundle savedInstanceState) {
         setUpSloganAnim();
     }
 

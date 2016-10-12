@@ -10,4 +10,9 @@
     <string name="my_collect">我的收藏</string>
     <string name="offline_download">离线下载</string>
     <string name="hot_story">今日热闻</string>
+
+    <string name="share">分享</string>
+    <string name="comment">评论</string>
+    <string name="collect">收藏</string>
+    <string name="praise">点赞</string>
 </resources>

@@ -1,0 +1,8 @@
+完成的需求：
+1、解决ListView的Header无法点击的问题
+
+2、解决自定义ThemeContentActivity的Toolbar上的按钮
+
+3、解决Toolbar的返回键为黑色
+
+4、解决Fragment中的ThemeBrief条目框，有空白的问题

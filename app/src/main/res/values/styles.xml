@@ -8,12 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
         <!--返回键样式-->
         <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowToggle</item>
+        <item name="colorControlNormal">@android:color/white</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
     </style>
-
+    <!--首先白色的与DrawerLayout交互的指示器-->
     <style name="AppTheme.DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@android:color/white</item>
     </style>
+
 
     <!--Toolbar中menu的溢出图标-->
     <style name="OverflowButtonStyle" parent="@android:style/Widget.ActionButton.Overflow">

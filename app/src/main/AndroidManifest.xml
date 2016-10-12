@@ -35,8 +35,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SplashActivity">
 
+        <activity android:name=".activity.SplashActivity">
+        </activity>
+
+        <activity android:name=".activity.StoryContentActivity"
+            android:parentActivityName=".activity.MainActivity">
+
+        </activity>
+
+        <activity android:name=".activity.ThemeContentActivity"
+            android:parentActivityName=".activity.MainActivity">
         </activity>
     </application>
 

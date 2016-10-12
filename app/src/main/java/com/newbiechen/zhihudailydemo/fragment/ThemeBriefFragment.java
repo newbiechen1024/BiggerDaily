@@ -18,7 +18,9 @@ import com.newbiechen.androidlib.base.BaseFragment;
 import com.newbiechen.androidlib.net.RemoteService;
 import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.zhihudailydemo.R;
+import com.newbiechen.zhihudailydemo.activity.ThemeContentActivity;
 import com.newbiechen.zhihudailydemo.adapter.ThemeBriefAdapter;
+import com.newbiechen.zhihudailydemo.entity.StoriesEntity;
 import com.newbiechen.zhihudailydemo.entity.ThemeBriefEntity;
 import com.newbiechen.zhihudailydemo.utils.URLManager;
 
@@ -85,7 +87,9 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
         mAdapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
             @Override
             public void itemClick(View view, int pos) {
-                mAdapter.getItem(pos);
+                StoriesEntity entity = mAdapter.getItem(pos);
+                Intent intent = new Intent(getContext(), ThemeContentActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -100,6 +104,7 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
         super.onViewCreated(view, savedInstanceState);
         refreshData();
     }
+
     private void refreshData(){
         String url = URLManager.THEME_BRIEF+getArguments().getInt(BUNDLE_ID);
         RemoteService.RemoteCallback callback = new RemoteService.RemoteCallback() {

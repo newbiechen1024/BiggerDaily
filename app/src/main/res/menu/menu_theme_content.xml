@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="id:theme_content_"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/theme_content_share"
+        android:icon="@mipmap/abc_ic_menu_share_mtrl_alpha"
+        android:title="@string/share"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/theme_content_favorite"
+        android:icon="@mipmap/collect"
+        android:title="@string/collect"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/theme_content_comment"
+        android:title="@string/comment"
+        app:actionProviderClass="com.newbiechen.zhihudailydemo.widget.CommentActionProvider"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/theme_content_praise"
+        android:title="@string/praise"
+        app:actionProviderClass="com.newbiechen.zhihudailydemo.widget.PraiseActionProvider"
+        app:showAsAction="always"/>
 </menu>

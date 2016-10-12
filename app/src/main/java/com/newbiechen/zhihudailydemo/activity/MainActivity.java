@@ -94,7 +94,7 @@ public class MainActivity extends AppBaseActivity {
         //添加头部
         View header = LayoutInflater.from(this)
                 .inflate(R.layout.slide_header,mLvSlide,false);
-        mLvSlide.addHeaderView(header);
+        mLvSlide.addHeaderView(header,null,false);
         mThemeMenuAdapter = new ThemeMenuAdapter(this);
         mLvSlide.setAdapter(mThemeMenuAdapter);
     }

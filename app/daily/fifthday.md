@@ -101,3 +101,35 @@ ActionProvider的使用：
 做不出来的原因：不知道如何自定义Menu。现在学会了。。
 
 ## 解决Fragment中的ThemeBrief条目框，有空白的问题
+
+原先代码：
+```xml
+    <TextView
+    android:id="@+id/brief_tv_title"
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:line="4"
+    android:textSize="18sp"
+    android:textColor="@color/black"/>
+```
+
+解决代码：
+```xml
+    <TextView
+    android:id="@+id/brief_tv_title"
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:maxlines="4"
+    android:textSize="18sp"
+    android:textColor="@color/black"/>
+```
+原理：
+在原先代码中：android:line="4"表示TextView有4行， 每行都占据默认高度，所以才会留有空白区域。
+修改之后：android:maxLines="4"表示最多有四行，当字必须换行的时候才会出现一行占据高度。
+
+错误原因：
+以为android:line=""是根据字的换行占据高度的，其实maxLines=""才是。

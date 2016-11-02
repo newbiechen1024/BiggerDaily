@@ -12,4 +12,11 @@
     <color name="translucent_white">#99ffffff</color>
 
     <color name="topic_background">#F3F3F3</color>
+
+    <color name="night_large_gray">#222222</color>
+    <color name="night_middle_gray">#343434</color>
+    <color name="night_normal_gray">#404040</color>
+    <color name="night_little_gray">#AEAEAE</color>
+
+    <color name="light_blue">#00A2ED</color>
 </resources>

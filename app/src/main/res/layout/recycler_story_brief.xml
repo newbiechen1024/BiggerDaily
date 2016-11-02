@@ -13,31 +13,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="7dp" />
+        android:layout_marginBottom="7dp"
+        android:textColor="?attr/dateTextColor"/>
 
     <!--story的简介-->
     <RelativeLayout
         android:id="@+id/brief_rl_story"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:padding="15dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/story_brief_shadow">
+        android:layout_marginTop="8dp">
 
         <TextView
             android:id="@+id/brief_tv_title"
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             android:ellipsize="end"
             android:lines="4"
             android:textSize="18sp"
-            android:textColor="@color/black"/>
+            android:textColor="?attr/briefTextColor"/>
 
         <ImageView
             android:id="@+id/brief_iv_icon"
             android:layout_width="@dimen/story_brief_icon_width"
             android:layout_height="@dimen/story_brief_icon_height"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
             android:scaleType="fitXY"
             android:src="@drawable/image_small_default"
             android:layout_alignParentTop="true"
@@ -47,6 +50,8 @@
             android:id="@+id/brief_iv_more_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
             android:src="@mipmap/home_pic"
             android:layout_alignRight="@+id/brief_iv_icon"
             android:layout_alignBottom="@+id/brief_iv_icon"

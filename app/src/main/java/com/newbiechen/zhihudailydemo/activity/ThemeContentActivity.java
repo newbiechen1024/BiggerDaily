@@ -2,11 +2,14 @@ package com.newbiechen.zhihudailydemo.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.newbiechen.androidlib.base.BaseActivity;
@@ -24,11 +27,12 @@ import com.newbiechen.zhihudailydemo.widget.PraiseActionProvider;
  */
 
 public class ThemeContentActivity extends AppBaseActivity {
-
+    private static final String TAG = "ThemeContentActivity";
     public static final String EXTRA_URL = "url";
+    public static final String EXTRA_IMG = "img";
 
     private WebView mWebView;
-
+    private ImageView mIvTitle;
     private MenuItem mFavoriteMenu;
 
     private CommentActionProvider mApComment;
@@ -42,6 +46,7 @@ public class ThemeContentActivity extends AppBaseActivity {
 
         //设置添加参数
         mWebView = getViewById(R.id.theme_content_webview);
+        mIvTitle = getViewById(R.id.theme_content_iv_icon);
     }
 
     @Override
@@ -51,7 +56,7 @@ public class ThemeContentActivity extends AppBaseActivity {
         //设置WebView
         setUpWebView();
         //加载数据
-
+        loadDataFromUrl();
     }
 
     private void setUpWebView(){
@@ -62,7 +67,8 @@ public class ThemeContentActivity extends AppBaseActivity {
         // 开启database storage API功能
         mWebView.getSettings().setDatabaseEnabled(true);
         // 开启Application Cache功能
-        mWebView.getSettings().setAppCacheEnabled(true);
+        mWebView.getSettings()
+                .setAppCacheEnabled(true);
     }
 
     private void loadDataFromUrl(){
@@ -75,6 +81,12 @@ public class ThemeContentActivity extends AppBaseActivity {
                 StoryContentEntity entity = gson.fromJson(data,StoryContentEntity.class);
                 showContent(entity);
                 entity.save();
+                String imgUrl = entity.getImages().get(0);
+                if (imgUrl != null){
+                    ImageLoader.getInstance(ThemeContentActivity.this)
+                            .bindImageFromUrl(imgUrl,mIvTitle);
+                }
+
             }
         };
         mRemoteService.loadData(url,callback);
@@ -94,6 +106,7 @@ public class ThemeContentActivity extends AppBaseActivity {
 
     @Override
     protected void processLogic(Bundle savedInstanceState) {
+        
     }
 
     @Override
@@ -137,6 +150,9 @@ public class ThemeContentActivity extends AppBaseActivity {
                     //设置收藏
                     isCollected = true;
                 }
+                break;
+            case android.R.id.home:
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

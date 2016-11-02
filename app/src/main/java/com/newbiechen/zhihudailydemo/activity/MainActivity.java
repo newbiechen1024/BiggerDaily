@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import com.newbiechen.androidlib.net.RemoteService;
 import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.androidlib.utils.StringUtils;
 import com.newbiechen.zhihudailydemo.R;
+import com.newbiechen.zhihudailydemo.ZhiHuApplication;
 import com.newbiechen.zhihudailydemo.adapter.ThemeMenuAdapter;
 import com.newbiechen.zhihudailydemo.base.AppBaseActivity;
 import com.newbiechen.zhihudailydemo.entity.ThemeEntity;
@@ -54,6 +56,14 @@ public class MainActivity extends AppBaseActivity {
     private FragmentManager mFragmentManager;
     @Override
     protected void onCreateContentView(Bundle savedInstanceState) {
+        //设置模式
+        if(ZhiHuApplication.isNightMode){
+            setTheme(R.style.NightMode);
+        }
+        else {
+            setTheme(R.style.LightMode);
+        }
+
         setContentView(R.layout.activity_main);
 
         mDrawerLayout = getViewById(R.id.main_drawer);
@@ -191,7 +201,40 @@ public class MainActivity extends AppBaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         //添加首页的菜单选项
         getMenuInflater().inflate(R.menu.menu_main,menu);
+
+        MenuItem changeMode = menu.findItem(R.id.main_night_theme);
+        if (ZhiHuApplication.isNightMode){
+            changeMode.setTitle(R.string.light_mode);
+        }
+        else {
+            changeMode.setTitle(R.string.night_mode);
+        }
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.main_night_theme:
+                if (ZhiHuApplication.isNightMode){
+                    //切换为日间模式
+                    SharedPreferenceUtils.saveData(this,"NightMode",false);
+                    ZhiHuApplication.isNightMode = false;
+                    item.setTitle(R.string.light_mode);
+                    setTheme(R.style.LightMode);
+                }
+                else {
+                    //切换为夜间模式
+                    SharedPreferenceUtils.saveData(this,"NightMode",true);
+                    ZhiHuApplication.isNightMode = true;
+                    item.setTitle(R.string.night_mode);
+                    setTheme(R.style.NightMode);
+                }
+                this.recreate();
+                break;
+        }
+        return true;
     }
 
     private void initFragment(Bundle savedInstanceState){

@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.List;
+
 /**
  * Created by PC on 2016/10/8.
  */
@@ -102,6 +104,7 @@ public class StoryContentEntity extends DataSupport {
     private String image;
     private String share_url;
     private String ga_prefix;
+    private List<String> images;
     private int type;
     @SerializedName(value = "id")
     private int content_id;
@@ -112,6 +115,10 @@ public class StoryContentEntity extends DataSupport {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public void setImages(List<String> images){
+        this.images = images;
     }
 
     public String getImage_source() {
@@ -132,6 +139,10 @@ public class StoryContentEntity extends DataSupport {
 
     public String getImage() {
         return image;
+    }
+
+    public List<String> getImages(){
+        return images;
     }
 
     public void setImage(String image) {

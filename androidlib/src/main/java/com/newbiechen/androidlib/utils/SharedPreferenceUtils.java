@@ -19,8 +19,21 @@ public class SharedPreferenceUtils {
         editor.commit();
     }
 
+    public static void saveData(Context context,String key, boolean value){
+        SharedPreferences sharedPreferences = context.
+                getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key,value);
+        editor.commit();
+    }
+
     public static String getData(Context context,String key,String defValue){
         return context.getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE).
                 getString(key,defValue);
+    }
+
+    public static boolean getData(Context context,String key,boolean defValue){
+        return context.getSharedPreferences(FILE_NAME,Context.MODE_APPEND)
+                .getBoolean(key,defValue);
     }
 }

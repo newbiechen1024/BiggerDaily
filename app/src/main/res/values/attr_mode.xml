@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="toolbarBackground" format="reference"/>
+    <attr name="dateTextColor" format="reference"/>
+    <attr name="msgBackground" format="reference"/>
+    <attr name="briefTextColor" format="reference"/>
+    <attr name="normalBackground" format="reference"/>
+</resources>

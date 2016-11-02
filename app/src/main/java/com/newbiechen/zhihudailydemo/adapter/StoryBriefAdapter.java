@@ -1,6 +1,8 @@
 package com.newbiechen.zhihudailydemo.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.newbiechen.androidlib.base.BaseAdapter;
 import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.zhihudailydemo.R;
+import com.newbiechen.zhihudailydemo.ZhiHuApplication;
 import com.newbiechen.zhihudailydemo.entity.StoriesEntity;
 import com.newbiechen.zhihudailydemo.entity.StoryBriefEntity;
 
@@ -38,6 +41,17 @@ public class StoryBriefAdapter extends BaseAdapter<StoryBriefEntity,StoryBriefAd
     @Override
     public void setUpViewHolder(StoryBriefViewHolder holder, int position) {
         StoryBriefEntity entity = mItemList.get(position);
+
+        if (ZhiHuApplication.isNightMode){
+            holder.rlStory.setBackground(
+                    mContext.getResources().getDrawable(R.drawable.night_story_brief_shadow));
+        }
+        else {
+            holder.rlStory.setBackground(
+                    mContext.getResources().getDrawable(R.drawable.story_brief_shadow)
+            );
+        }
+
         if (entity.getType() == StoryBriefEntity.TYPE_DATE){
             //隐藏StoryBrief显示卡片
             holder.rlStory.setVisibility(View.GONE);

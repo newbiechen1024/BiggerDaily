@@ -6,6 +6,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_title_height"
         android:minHeight="@dimen/app_title_height"
-        android:background="?attr/colorPrimary">
+        android:background="?attr/toolbarBackground">
     </android.support.v7.widget.Toolbar>
 </merge>

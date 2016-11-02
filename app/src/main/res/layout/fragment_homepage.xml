@@ -2,11 +2,12 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/normalBackground">
+
     <com.lhh.ptrrv.library.PullToRefreshRecyclerView
         android:id="@+id/ptrrv_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/topic_background">
+        android:layout_height="match_parent">
     </com.lhh.ptrrv.library.PullToRefreshRecyclerView>
 </RelativeLayout>

@@ -9,7 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/content_app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="@dimen/theme_brief_height"
         android:fitsSystemWindows="true"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">

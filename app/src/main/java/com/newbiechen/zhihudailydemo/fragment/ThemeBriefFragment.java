@@ -89,6 +89,7 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
             public void itemClick(View view, int pos) {
                 StoriesEntity entity = mAdapter.getItem(pos);
                 Intent intent = new Intent(getContext(), ThemeContentActivity.class);
+                intent.putExtra(ThemeContentActivity.EXTRA_URL,entity.getId());
                 startActivity(intent);
             }
         });

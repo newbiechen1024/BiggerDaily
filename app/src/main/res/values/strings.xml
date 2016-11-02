@@ -15,4 +15,7 @@
     <string name="comment">评论</string>
     <string name="collect">收藏</string>
     <string name="praise">点赞</string>
+
+    <string name="night_mode">夜间模式</string>
+    <string name="light_mode">日间模式</string>
 </resources>

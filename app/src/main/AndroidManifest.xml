@@ -12,7 +12,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/LightMode">
-     <!-- <activity android:name=".activity.SplashActivity">
+
+      <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,9 +27,9 @@
         <activity android:name=".activity.StoryContentActivity"
             android:parentActivityName=".activity.MainActivity">
 
-        </activity>-->
+        </activity>
 
-        <activity android:name=".activity.MainActivity">
+<!--        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,7 +46,7 @@
         </activity>
 
         <activity android:name=".activity.ThemeContentActivity">
-        </activity>
+        </activity>-->
     </application>
 
 </manifest>

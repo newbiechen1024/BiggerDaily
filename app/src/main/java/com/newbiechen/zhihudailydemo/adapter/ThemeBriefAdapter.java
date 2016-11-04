@@ -54,6 +54,7 @@ public class ThemeBriefAdapter extends BaseAdapter<StoriesEntity,ThemeBriefAdapt
             );
         }
 
+        holder.tvTitle.setText(entity.getTitle());
         if (entity.getImages() != null){
             holder.ivIcon.setVisibility(View.VISIBLE);
             //异步加载图片

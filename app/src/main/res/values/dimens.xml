@@ -13,5 +13,5 @@
     <dimen name="story_brief_icon_height">70dp</dimen>
 
     <dimen name="slide_theme_height">50dp</dimen>
-    <dimen name="theme_brief_height">230dp</dimen>
+    <dimen name="theme_brief_height">200dp</dimen>
 </resources>

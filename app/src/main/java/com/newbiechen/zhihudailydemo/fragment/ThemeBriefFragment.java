@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,6 +34,8 @@ import com.newbiechen.zhihudailydemo.utils.URLManager;
 public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,PullToRefreshRecyclerView.PagingableListener{
     public static final String TAG = "ThemeBriefFragment";
     private static final String BUNDLE_ID = "id";
+    private static final String BUNDLE_NAME = "name";
+
     private PullToRefreshRecyclerView mPtrrvRefresh;
     private ThemeBriefAdapter mAdapter;
     private ImageView mIvThemeImg;
@@ -39,6 +44,7 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_theme_brief,container,false);
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -50,7 +56,9 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
 
     @Override
     protected void initWidget() {
-
+        //设置Toolbar的标题
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setTitle(getArguments().getString(BUNDLE_NAME));
     }
 
     private void setUpRefreshLayout(){
@@ -90,6 +98,7 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
                 StoriesEntity entity = mAdapter.getItem(pos);
                 Intent intent = new Intent(getContext(), ThemeContentActivity.class);
                 intent.putExtra(ThemeContentActivity.EXTRA_URL,entity.getId());
+                intent.putExtra(ThemeContentActivity.EXTRA_TITLE,entity.getTitle());
                 startActivity(intent);
             }
         });
@@ -104,6 +113,12 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         refreshData();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_theme_brief,menu);
     }
 
     private void refreshData(){
@@ -141,10 +156,10 @@ public class ThemeBriefFragment extends BaseFragment implements SwipeRefreshLayo
     }
     /******************************************************/
 
-    public static ThemeBriefFragment newInstance(int id){
+    public static ThemeBriefFragment newInstance(int id,String name){
         Bundle bundle = new Bundle();
         bundle.putInt(BUNDLE_ID,id);
-
+        bundle.putString(BUNDLE_NAME,name);
         ThemeBriefFragment fragment = new ThemeBriefFragment();
         fragment.setArguments(bundle);
         return fragment;

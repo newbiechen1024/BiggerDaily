@@ -7,6 +7,7 @@
     <string name="close_drawer">关闭</string>
     <string name="message">消息</string>
     <string name="please_login">请登录</string>
+    <string name="exit">登出</string>
     <string name="my_collect">我的收藏</string>
     <string name="offline_download">离线下载</string>
     <string name="hot_story">今日热闻</string>
@@ -18,4 +19,18 @@
 
     <string name="night_mode">夜间模式</string>
     <string name="light_mode">日间模式</string>
+
+    <string name="choose_login_method">选择登陆方式</string>
+    <string name="wb_login">微博登陆</string>
+    <string name="qq_login">QQ登陆</string>
+    
+    <string name="bound_sina_weibo">绑定新浪微博</string>
+    <string name="unbound_sina_weibo">解绑新浪微博</string>
+    <string name="bound_qq">绑定腾讯QQ</string>
+    <string name="unbound_qq">解绑腾讯qq</string>
+
+    <string name="edit_profile">编辑</string>
+    <string name="edit_finish">完成</string>
+
+    <string name="person_page">个人主页</string>
 </resources>

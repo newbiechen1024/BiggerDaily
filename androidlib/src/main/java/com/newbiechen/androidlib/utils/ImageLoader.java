@@ -281,6 +281,11 @@ public class ImageLoader {
         return getBitmapFromDiskCache(urlPath,MetricsUtils.getScreenWidth(),
                 MetricsUtils.getScreenHeight());
     }
+
+    public Bitmap getBitmap(String urlPath){
+        return loadBitmap(urlPath,MetricsUtils.getScreenWidth(),
+                MetricsUtils.getScreenHeight());
+    }
     /**
      * 从二级缓存中提取数据
      * @param urlPath ：url对应的hexString作为key

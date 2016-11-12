@@ -3,9 +3,12 @@ package com.newbiechen.zhihudailydemo.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,8 +17,10 @@ import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.newbiechen.androidlib.base.BaseAdapter;
 import com.newbiechen.androidlib.base.BaseFragment;
 import com.newbiechen.androidlib.net.RemoteService;
+import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.androidlib.utils.StringUtils;
 import com.newbiechen.zhihudailydemo.R;
+import com.newbiechen.zhihudailydemo.ZhiHuApplication;
 import com.newbiechen.zhihudailydemo.activity.StoryContentActivity;
 import com.newbiechen.zhihudailydemo.adapter.StoryBriefAdapter;
 import com.newbiechen.zhihudailydemo.entity.LastNewsEntity;
@@ -49,6 +54,7 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
     @Override
     protected View onCreateContentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_homepage,container,false);
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -68,6 +74,10 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
         refreshDataFromDb();
         //从网络中加载数据
         refreshDataFromUrl();
+
+        //设置Toolbar的标题
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setTitle("首页");
     }
 
     private void refreshDataFromDb(){
@@ -262,6 +272,45 @@ public class HomePageFragment extends BaseFragment implements PullToRefreshRecyc
     public void onDestroy() {
         super.onDestroy();
         saveData2Db();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_homepage,menu);
+
+        MenuItem changeMode = menu.findItem(R.id.main_night_theme);
+        if (ZhiHuApplication.isNightMode){
+            changeMode.setTitle(R.string.light_mode);
+        }
+        else {
+            changeMode.setTitle(R.string.night_mode);
+        }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.main_night_theme:
+                if (ZhiHuApplication.isNightMode){
+                    //切换为日间模式
+                    SharedPreferenceUtils.saveData(getContext(),"NightMode",false);
+                    ZhiHuApplication.isNightMode = false;
+                    item.setTitle(R.string.light_mode);
+                    getActivity().setTheme(R.style.LightMode);
+                }
+                else {
+                    //切换为夜间模式
+                    SharedPreferenceUtils.saveData(getContext(),"NightMode",true);
+                    ZhiHuApplication.isNightMode = true;
+                    item.setTitle(R.string.night_mode);
+                    getActivity().setTheme(R.style.NightMode);
+                }
+                getActivity().recreate();
+                break;
+        }
+        return true;
     }
 
     private void startActivity2StoryContent(int id,String title){

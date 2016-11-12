@@ -6,10 +6,12 @@
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
+    <color name="red">#ff0000</color>
     <color name="hole_gray">#17181A</color>
     <color name="transparent">#00000000</color>
     <color name="translucent">#e0000000</color>
     <color name="translucent_white">#99ffffff</color>
+    <color name="down_line">#E7E7E7</color>
 
     <color name="topic_background">#F3F3F3</color>
 
@@ -19,4 +21,7 @@
     <color name="night_little_gray">#AEAEAE</color>
 
     <color name="light_blue">#00A2ED</color>
+    
+    <color name="person_info_bound">#D8D8D8</color>
+    <color name="person_info_name">#C5C5C5</color>
 </resources>

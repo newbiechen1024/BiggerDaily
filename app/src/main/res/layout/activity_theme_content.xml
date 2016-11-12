@@ -5,26 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--标题栏-->
+
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/theme_content_abl_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/theme_brief_height"
+        android:layout_height="wrap_content"
         android:background="@color/white">
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?attr/colorPrimaryDark">
+
             <ImageView
                 android:id="@+id/theme_content_iv_icon"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_height="@dimen/theme_brief_height"
+                android:visibility="gone"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-
-    <!--标题栏-->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_title_height"
+        android:minHeight="@dimen/app_title_height"
+        android:background="?attr/colorPrimary"
+        app:layout_behavior="com.newbiechen.zhihudailydemo.behavior.ThemeContentBehavior">
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -36,13 +48,4 @@
             android:layout_height="match_parent">
         </WebView>
     </android.support.v4.widget.NestedScrollView>
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/app_title_height"
-        android:minHeight="@dimen/app_title_height"
-        android:background="?attr/colorPrimary"
-        app:layout_behavior="com.newbiechen.zhihudailydemo.behavior.ThemeContentBehavior">
-    </android.support.v7.widget.Toolbar>
 </android.support.design.widget.CoordinatorLayout>

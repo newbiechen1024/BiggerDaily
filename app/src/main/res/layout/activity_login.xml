@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:background="@drawable/login_bg">
+
+    <include
+        layout="@layout/toolbar"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="80dp"
+        android:src="@mipmap/splash_logo"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择登陆方式"
+        android:layout_marginBottom="30dp"
+        android:textColor="@color/translucent_white"
+        android:textSize="20sp"/>
+
+    <Button
+        android:id="@+id/login_btn_wb"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/wb_login"
+        android:layout_marginBottom="15dp"/>
+
+    <Button
+        android:id="@+id/login_btn_qq"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/qq_login"/>
+
+</LinearLayout>

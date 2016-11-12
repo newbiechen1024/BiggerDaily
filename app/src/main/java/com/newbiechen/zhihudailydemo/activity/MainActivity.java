@@ -1,9 +1,12 @@
 package com.newbiechen.zhihudailydemo.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,7 +20,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -25,6 +32,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.newbiechen.androidlib.net.RemoteService;
+import com.newbiechen.androidlib.utils.ImageLoader;
 import com.newbiechen.androidlib.utils.SharedPreferenceUtils;
 import com.newbiechen.androidlib.utils.StringUtils;
 import com.newbiechen.zhihudailydemo.R;
@@ -32,10 +40,13 @@ import com.newbiechen.zhihudailydemo.ZhiHuApplication;
 import com.newbiechen.zhihudailydemo.adapter.ThemeMenuAdapter;
 import com.newbiechen.zhihudailydemo.base.AppBaseActivity;
 import com.newbiechen.zhihudailydemo.entity.ThemeEntity;
+import com.newbiechen.zhihudailydemo.entity.UserInfo;
 import com.newbiechen.zhihudailydemo.fragment.HomePageFragment;
+import com.newbiechen.zhihudailydemo.fragment.PersonInfoFragment;
 import com.newbiechen.zhihudailydemo.fragment.ThemeBriefFragment;
 import com.newbiechen.zhihudailydemo.utils.SharedPresManager;
 import com.newbiechen.zhihudailydemo.utils.URLManager;
+import com.umeng.socialize.UMShareAPI;
 
 import junit.framework.Test;
 
@@ -47,6 +58,7 @@ import java.net.URL;
 import java.util.List;
 
 public class MainActivity extends AppBaseActivity {
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private ListView mLvSlide;
@@ -54,6 +66,11 @@ public class MainActivity extends AppBaseActivity {
     private Fragment mCurrentFragment;
     private HomePageFragment mHomePageFragment;
     private FragmentManager mFragmentManager;
+
+    private TextView mTvUserName;
+    private ImageView mIvIcon;
+
+    private UserInfo mUserInfo;
     @Override
     protected void onCreateContentView(Bundle savedInstanceState) {
         //设置模式
@@ -68,12 +85,18 @@ public class MainActivity extends AppBaseActivity {
 
         mDrawerLayout = getViewById(R.id.main_drawer);
         mLvSlide = getViewById(R.id.main_lv_slide);
+
+        if(Build.VERSION.SDK_INT>=23){
+            String[] mPermissionList = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CALL_PHONE,Manifest.permission.READ_LOGS,Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.SET_DEBUG_APP,Manifest.permission.SYSTEM_ALERT_WINDOW,Manifest.permission.GET_ACCOUNTS,Manifest.permission.WRITE_APN_SETTINGS};
+            ActivityCompat.requestPermissions(this,mPermissionList,123);
+        }
     }
 
 
     @Override
     protected void initWidget(Bundle savedInstanceState) {
-
+        //
+        mUserInfo = ZhiHuApplication.sUserInfo;
         //设置标题
         getSupportActionBar().setTitle(R.string.homepage);
         //让DrawLayout与Toolbar关联
@@ -104,9 +127,49 @@ public class MainActivity extends AppBaseActivity {
         //添加头部
         View header = LayoutInflater.from(this)
                 .inflate(R.layout.slide_header,mLvSlide,false);
+        setUpHeader(header);
         mLvSlide.addHeaderView(header,null,false);
         mThemeMenuAdapter = new ThemeMenuAdapter(this);
         mLvSlide.setAdapter(mThemeMenuAdapter);
+    }
+
+    private void setUpHeader(View view){
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.header_linear_userinfo);
+        mIvIcon = (ImageView) view.findViewById(R.id.header_iv_icon);
+        mTvUserName = (TextView) view.findViewById(R.id.header_tv_name);
+
+        initUserInfo();
+        //设置登陆监听
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //判断是登录，还是获取个人信息
+                if (mUserInfo.isOauthQQ == false && mUserInfo.isOauthWeiBo == false){
+                    Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.main_frame,
+                                    PersonInfoFragment.newInstance(),PersonInfoFragment.TAG)
+                            .addToBackStack(PersonInfoFragment.TAG)
+                            .commit();
+                }
+            }
+        });
+    }
+
+    private void initUserInfo(){
+        mTvUserName.setText(mUserInfo.userName);
+        if (mUserInfo.isOauthWeiBo == false && mUserInfo.isOauthQQ == false){
+            mIvIcon.setImageResource(R.mipmap.menu_avatar);
+        }
+        else {
+            //获取网络中的图片
+            ImageLoader.getInstance(this)
+                    .bindImageFromUrl(mUserInfo.userImageUrl,mIvIcon);
+        }
     }
 
     private void loadSlideData(){
@@ -151,10 +214,19 @@ public class MainActivity extends AppBaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        initUserInfo();
+    }
+
+    @Override
     protected void initClick() {
         mLvSlide.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //关闭侧滑栏
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
+
                 if (position == 1){
                     mFragmentManager.beginTransaction()
                             .replace(R.id.main_frame,
@@ -163,13 +235,13 @@ public class MainActivity extends AppBaseActivity {
                 }
                 else if (position != 0){
                     ThemeEntity entity = mThemeMenuAdapter.getItem(position-1);
+                    getSupportActionBar().setTitle(entity.getName());
                     //切换Fragment
                     mFragmentManager.beginTransaction()
                             .replace(R.id.main_frame, ThemeBriefFragment.
-                                    newInstance(entity.getId()),ThemeBriefFragment.TAG)
+                                    newInstance(entity.getId(),entity.getName()),ThemeBriefFragment.TAG)
                             .commit();
                 }
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
     }
@@ -188,6 +260,23 @@ public class MainActivity extends AppBaseActivity {
         mToggle.syncState();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode,resultCode,data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        }
+        else {
+            super.onBackPressed();
+        }
+
+    }
+
     /**
      * 当资源配置改变的时候调用
      */
@@ -198,43 +287,10 @@ public class MainActivity extends AppBaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //添加首页的菜单选项
-        getMenuInflater().inflate(R.menu.menu_main,menu);
-
-        MenuItem changeMode = menu.findItem(R.id.main_night_theme);
-        if (ZhiHuApplication.isNightMode){
-            changeMode.setTitle(R.string.light_mode);
-        }
-        else {
-            changeMode.setTitle(R.string.night_mode);
-        }
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.main_night_theme:
-                if (ZhiHuApplication.isNightMode){
-                    //切换为日间模式
-                    SharedPreferenceUtils.saveData(this,"NightMode",false);
-                    ZhiHuApplication.isNightMode = false;
-                    item.setTitle(R.string.light_mode);
-                    setTheme(R.style.LightMode);
-                }
-                else {
-                    //切换为夜间模式
-                    SharedPreferenceUtils.saveData(this,"NightMode",true);
-                    ZhiHuApplication.isNightMode = true;
-                    item.setTitle(R.string.night_mode);
-                    setTheme(R.style.NightMode);
-                }
-                this.recreate();
-                break;
-        }
-        return true;
+    protected void onDestroy() {
+        super.onDestroy();
+        //存储UserInfo
+        UserInfo.saveUserInfo(this,mUserInfo);
     }
 
     private void initFragment(Bundle savedInstanceState){

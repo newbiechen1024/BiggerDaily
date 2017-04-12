@@ -31,6 +31,9 @@ import com.newbiechen.zhihudailydemo.widget.IconView;
 
 /**
  * Created by PC on 2016/10/1.
+ * 整体流程:
+ * 1. 隐藏StatusBar and NavigationBar
+ * 2. 动画的逐步显示
  */
 public class SplashActivity extends BaseActivity {
     private static final String TAG = "SplashActivity";
@@ -136,8 +139,8 @@ public class SplashActivity extends BaseActivity {
      * 设置图片显示的动画
      */
     private void showSplashImg(){
-        //获取图片的最新地址,并加载到缓存
-        RemoteCallback callback = new RemoteCallback(){
+        //获取图片的最新地址,并加载到缓存 (最新地址变了，没有修改，见谅)
+       /* RemoteCallback callback = new RemoteCallback(){
             @Override
             public void onResponse(String data) {
                 Gson gson = new Gson();
@@ -155,7 +158,7 @@ public class SplashActivity extends BaseActivity {
             }
         };
         //远程调用
-        RemoteService.getInstance(this).loadData(URLManager.SPLASH_IMG_PATH,callback);
+        RemoteService.getInstance(this).loadData(URLManager.SPLASH_IMG_PATH,callback);*/
         //加载图片
         setUpImgAnim();
     }

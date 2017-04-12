@@ -113,7 +113,6 @@ public class IconView extends View{
         mArcPaint.setDither(true);
         //扇形的边角为圆形
         mArcPaint.setStrokeCap(Paint.Cap.ROUND);
-        Log.d(TAG,mArcStroke+"什么鬼");
         //半圆的动画
         setUpArcAnim();
     }
